@@ -16,4 +16,13 @@ struct TextureComponent
     // Texture Dimensions
     int width;
     int height;
+
+    // Function to destroy the texture properly
+    void destroy()
+    {
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+        width = 0;
+        height = 0;
+    }
 };

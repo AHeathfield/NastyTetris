@@ -26,8 +26,6 @@ public:
     // Loads texture from file
     bool loadTexture(TextureComponent* textureComponent);
 
-    // Helps delete texture
-    void destroyTexture(TextureComponent* textureComponent);
 
 private:
     SDL_Renderer* mRenderer = nullptr;

@@ -1,6 +1,6 @@
-/* Headers */
-//Using SDL, SDL_image, SDL_ttf SDL_mixer, and STL string
+// External Libs
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_keycode.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_surface.h>
@@ -11,11 +11,17 @@
 #include <string>
 #include <sstream>
 
-// My stuff
+// ECS
 #include "src/Core/ECS.h"
 #include "src/Components/TextureComponent.h"
 #include "src/Components/TransformComponent.h"
+#include "src/States/PlayState.h"
 #include "src/Systems/RenderSystem.h"
+
+// States
+#include "src/States/State.h"
+#include "src/States/TitleState.h"
+
 
 Coordinator gCoordinator;
 
@@ -196,8 +202,12 @@ bool checkCollision( SDL_Rect a, SDL_Rect b )
 
 int main( int argc, char* args[] )
 {
-    //Final exit code
+    // Final exit code
     int exitCode{ 0 };
+
+    // Setting Initial State and next State
+    State* currentState = new TitleState();
+    State* nextState = nullptr;
 
     // Initalizing ECS Stuff
     gCoordinator.Init();
@@ -233,6 +243,7 @@ int main( int argc, char* args[] )
     {
         //The quit flag
         bool quit{ false };
+        bool stateChanged = false;
 
         //The event data
         SDL_Event e;
@@ -240,22 +251,8 @@ int main( int argc, char* args[] )
 
         // SETTING ENTITIES
         // When you do AddComponent, it automatically updates which systems should have it
-        Entity background = gCoordinator.CreateEntity();
-        gCoordinator.AddComponent(
-                background,
-                TextureComponent{
-                    .texture = nullptr,
-                    .path = "src/Assets/testBG.png",
-                    .width = 1280,
-                    .height = 960
-                });
-        gCoordinator.AddComponent(
-                background,
-                TransformComponent{
-                    .position = Vector2((1920 - 1280) / 2.f, (1080 - 960) / 2.f),
-                    .rotation = Vector2(),
-                    .scale = Vector2()
-                });
+        // State->Enter() calls gCoordinator.AddComponent
+        currentState->Enter();
 
         // DO THIS AFTER LOADING TEXTURES!!!
         if (renderSystem->LoadMedia() == false)
@@ -268,6 +265,18 @@ int main( int argc, char* args[] )
         // =================== Main Loop ========================
         while( quit == false )
         {
+            // Setting new state
+            if (stateChanged)
+            {
+                currentState->Exit();
+                delete currentState;
+                currentState = nextState;
+                currentState->Enter();
+
+                renderSystem->LoadMedia();
+                stateChanged = false;
+            }
+
             //Get event data
             while( SDL_PollEvent( &e ) == true )
             {
@@ -277,16 +286,34 @@ int main( int argc, char* args[] )
                     //End the main loop
                     quit = true;
                 }
+                // TEMP: If Key is pressed
+                else if (e.type == SDL_EVENT_KEY_DOWN)
+                {
+                    if (e.key.key == SDLK_RETURN)
+                    {
+                        stateChanged = true;
+                        nextState = new PlayState();
+                    }
+                    else if (e.key.key == SDLK_BACKSPACE)
+                    {
+                        stateChanged = true;
+                        nextState = new TitleState();
+                    }
+                }
             }
 
             renderSystem->Update();
         }
         // =======================================================
-
+        currentState->Exit();
 
     }
 
     //Clean up
+    delete currentState;
+    currentState = nullptr;
+    nextState = nullptr;
+
     renderSystem->Close();
     close();
 

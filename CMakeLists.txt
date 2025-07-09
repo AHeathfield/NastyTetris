@@ -24,6 +24,8 @@ add_subdirectory(vendored/SDL_mixer EXCLUDE_FROM_ALL)
 # Create your game executable target as usual
 add_executable(game WIN32 game.cpp 
     src/Systems/RenderSystem.cpp
+    src/States/TitleState.cpp
+    src/States/PlayState.cpp
     )
 
 # Link to the actual SDL3 library.

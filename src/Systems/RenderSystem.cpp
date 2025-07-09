@@ -106,7 +106,7 @@ void RenderSystem::Close()
     for (const auto& entity : mEntities)
     {
         auto& textureComponent = gCoordinator.GetComponent<TextureComponent>(entity);
-        destroyTexture(&textureComponent);
+        textureComponent.destroy();
     }
 
     // Destroys window
@@ -119,8 +119,7 @@ void RenderSystem::Close()
 bool RenderSystem::loadTexture(TextureComponent* textureComponent)
 {
     // TODO: Clean up texture if already exists
-    destroyTexture(textureComponent);
-
+    textureComponent->destroy();
     // SDL_Log(textureComponent.path.c_str());
 
     //Load surface
@@ -158,14 +157,4 @@ bool RenderSystem::loadTexture(TextureComponent* textureComponent)
 
     //Return success if texture loaded
     return textureComponent->texture != nullptr;
-}
-
-
-void RenderSystem::destroyTexture(TextureComponent* textureComponent)
-{
-    // Clean up texture
-    SDL_DestroyTexture(textureComponent->texture);
-    textureComponent->texture = nullptr;
-    textureComponent->width = 0;
-    textureComponent->height = 0;
 }
