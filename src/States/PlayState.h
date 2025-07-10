@@ -3,6 +3,8 @@
 #include "State.h"
 #include "../Components/TextureComponent.h"
 #include "../Components/TransformComponent.h"
+#include "../Components/TetrisGravityComponent.h"
+
 
 class PlayState : public State
 {
@@ -12,4 +14,5 @@ public:
 
 private:
     Entity mBackground;
+    Entity mTestBlock;
 };

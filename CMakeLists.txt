@@ -25,6 +25,7 @@ add_subdirectory(vendored/SDL_mixer EXCLUDE_FROM_ALL)
 add_executable(game WIN32 game.cpp 
     src/Systems/RenderSystem.cpp
     src/Systems/MouseButtonSystem.cpp
+    src/Systems/PhysicsSystem.cpp
     src/States/TitleState.cpp
     src/States/PlayState.cpp
     src/Components/Buttons/StateChangerButton.cpp

@@ -9,17 +9,36 @@ void PlayState::Enter()
             mBackground,
             TextureComponent{
                 .texture = nullptr,
-                .path = "src/Assets/testBG.png",
-                .width = 1920,
-                .height = 1080
+                .path = "src/Assets/gameBG.png",
             });
 
     gCoordinator.AddComponent(
             mBackground,
             TransformComponent{
-                .position = Vector2(500.f, 200.f),
+                .position = Vector2(),
                 .rotation = Vector2(),
                 .scale = Vector2()
+            });
+
+    mTestBlock = gCoordinator.CreateEntity();
+    gCoordinator.AddComponent(
+            mTestBlock,
+            TextureComponent{
+                .texture = nullptr,
+                .path = "src/Assets/yellowBlock.png",
+            });
+
+    gCoordinator.AddComponent(
+            mTestBlock,
+            TransformComponent{
+                .position = Vector2(920.f, 142.f),
+                .rotation = Vector2(),
+                .scale = Vector2()
+            });
+    gCoordinator.AddComponent(
+            mTestBlock,
+            TetrisGravityComponent{
+                .gravity = 40.f
             });
 }
 

@@ -15,8 +15,10 @@
 #include "src/Core/ECS.h"
 #include "src/Components/TextureComponent.h"
 #include "src/Components/TransformComponent.h"
+#include "src/Components/TetrisGravityComponent.h"
 #include "src/Systems/RenderSystem.h"
 #include "src/Systems/MouseButtonSystem.h"
+#include "src/Systems/PhysicsSystem.h"
 
 // States
 #include "src/States/State.h"
@@ -217,6 +219,7 @@ int main( int argc, char* args[] )
     // Registering Components
     gCoordinator.RegisterComponent<TextureComponent>();
     gCoordinator.RegisterComponent<TransformComponent>();
+    gCoordinator.RegisterComponent<TetrisGravityComponent>();
     gCoordinator.RegisterComponent<ButtonComponent*>();
 
     // Registering Systems
@@ -239,6 +242,15 @@ int main( int argc, char* args[] )
         signature.set(gCoordinator.GetComponentType<TransformComponent>());
         signature.set(gCoordinator.GetComponentType<ButtonComponent*>());
         gCoordinator.SetSystemSignature<MouseButtonSystem>(signature);
+    }
+
+    // Physics System
+    auto physicsSystem = gCoordinator.RegisterSystem<PhysicsSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<TransformComponent>());
+        signature.set(gCoordinator.GetComponentType<TetrisGravityComponent>());
+        gCoordinator.SetSystemSignature<PhysicsSystem>(signature);
     }
 
     // Other systems...
@@ -298,6 +310,7 @@ int main( int argc, char* args[] )
                 mouseButtonSystem->HandleEvent(&e);
             }
 
+            physicsSystem->Update();
             renderSystem->Update();
         }
         // =======================================================
