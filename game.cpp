@@ -17,6 +17,7 @@
 #include "src/Components/TransformComponent.h"
 #include "src/States/PlayState.h"
 #include "src/Systems/RenderSystem.h"
+#include "src/Systems/MouseButtonSystem.h"
 
 // States
 #include "src/States/State.h"
@@ -24,6 +25,7 @@
 
 
 Coordinator gCoordinator;
+State* gCurrentState;
 
 /* Constants */
 constexpr int kScreenFps{ 60 };
@@ -206,8 +208,8 @@ int main( int argc, char* args[] )
     int exitCode{ 0 };
 
     // Setting Initial State and next State
-    State* currentState = new TitleState();
-    State* nextState = nullptr;
+    gCurrentState = new TitleState();
+    State* prevState = gCurrentState;
 
     // Initalizing ECS Stuff
     gCoordinator.Init();
@@ -216,6 +218,7 @@ int main( int argc, char* args[] )
     // Registering Components
     gCoordinator.RegisterComponent<TextureComponent>();
     gCoordinator.RegisterComponent<TransformComponent>();
+    gCoordinator.RegisterComponent<ButtonComponent*>();
 
     // Registering Systems
     // Render System
@@ -228,6 +231,16 @@ int main( int argc, char* args[] )
         gCoordinator.SetSystemSignature<RenderSystem>(signature);
     }
     renderSystem->Init();
+
+    // Mouse Button System
+    auto mouseButtonSystem = gCoordinator.RegisterSystem<MouseButtonSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<TextureComponent>());
+        signature.set(gCoordinator.GetComponentType<TransformComponent>());
+        signature.set(gCoordinator.GetComponentType<ButtonComponent*>());
+        gCoordinator.SetSystemSignature<MouseButtonSystem>(signature);
+    }
 
     // Other systems...
 
@@ -252,7 +265,7 @@ int main( int argc, char* args[] )
         // SETTING ENTITIES
         // When you do AddComponent, it automatically updates which systems should have it
         // State->Enter() calls gCoordinator.AddComponent
-        currentState->Enter();
+        gCurrentState->Enter();
 
         // DO THIS AFTER LOADING TEXTURES!!!
         if (renderSystem->LoadMedia() == false)
@@ -265,16 +278,12 @@ int main( int argc, char* args[] )
         // =================== Main Loop ========================
         while( quit == false )
         {
-            // Setting new state
-            if (stateChanged)
-            {
-                currentState->Exit();
-                delete currentState;
-                currentState = nextState;
-                currentState->Enter();
 
+            // Setting new state
+            if (gCurrentState != prevState)
+            {
                 renderSystem->LoadMedia();
-                stateChanged = false;
+                prevState = gCurrentState;
             }
 
             //Get event data
@@ -286,33 +295,34 @@ int main( int argc, char* args[] )
                     //End the main loop
                     quit = true;
                 }
+                mouseButtonSystem->HandleEvent(&e);
+
                 // TEMP: If Key is pressed
-                else if (e.type == SDL_EVENT_KEY_DOWN)
-                {
-                    if (e.key.key == SDLK_RETURN)
-                    {
-                        stateChanged = true;
-                        nextState = new PlayState();
-                    }
-                    else if (e.key.key == SDLK_BACKSPACE)
-                    {
-                        stateChanged = true;
-                        nextState = new TitleState();
-                    }
-                }
+                // else if (e.type == SDL_EVENT_KEY_DOWN)
+                // {
+                //     if (e.key.key == SDLK_RETURN)
+                //     {
+                //         stateChanged = true;
+                //         nextState = new PlayState();
+                //     }
+                //     else if (e.key.key == SDLK_BACKSPACE)
+                //     {
+                //         stateChanged = true;
+                //         nextState = new TitleState();
+                //     }
+                // }
             }
 
             renderSystem->Update();
         }
         // =======================================================
-        currentState->Exit();
-
+        gCurrentState->Exit();
     }
 
     //Clean up
-    delete currentState;
-    currentState = nullptr;
-    nextState = nullptr;
+    delete gCurrentState;
+    gCurrentState = nullptr;
+    prevState = nullptr;
 
     renderSystem->Close();
     close();

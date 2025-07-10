@@ -24,8 +24,10 @@ add_subdirectory(vendored/SDL_mixer EXCLUDE_FROM_ALL)
 # Create your game executable target as usual
 add_executable(game WIN32 game.cpp 
     src/Systems/RenderSystem.cpp
+    src/Systems/MouseButtonSystem.cpp
     src/States/TitleState.cpp
     src/States/PlayState.cpp
+    src/Components/Buttons/StateChangerButton.cpp
     )
 
 # Link to the actual SDL3 library.

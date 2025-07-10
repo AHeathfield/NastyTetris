@@ -5,6 +5,8 @@
 // #include "../Core/Vector2.h"
 #include "../Components/TextureComponent.h"
 #include "../Components/TransformComponent.h"
+#include "../Components/Buttons/ButtonComponent.h"
+#include "../Components/Buttons/StateChangerButton.h"
 
 class TitleState : public State
 {

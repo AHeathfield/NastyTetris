@@ -6,9 +6,6 @@
 
 struct TextureComponent
 {
-    // I dont think I need this
-    // static constexpr float originalSize = -1.f;
-
     // Contains texture data
     SDL_Texture* texture;
     std::string path;
