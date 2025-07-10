@@ -17,22 +17,27 @@ void MouseButtonSystem::HandleEvent(SDL_Event* e)
         //Check if mouse is in button
         for (const auto& entity : mEntities)
         {
-            const auto& texture = gCoordinator.GetComponent<TextureComponent>(entity);
+            auto& texture = gCoordinator.GetComponent<TextureComponent>(entity);
             const auto& transform = gCoordinator.GetComponent<TransformComponent>(entity);
             auto& button = gCoordinator.GetComponent<ButtonComponent*>(entity);
 
             if (isMouseInside(mousePos, transform.position, texture))
             {
-                // activateHoverColor(texture);
+                activateHoverColor(&texture);
                 
                 if (e->type == SDL_EVENT_MOUSE_BUTTON_DOWN)
                 {
-                    // activateClickColor(texture);
+                    activatePressColor(&texture);
                 }
                 else if (e->type == SDL_EVENT_MOUSE_BUTTON_UP)
                 {
+                    disableEffectColor(&texture);
                     button->Click();
                 }
+            }
+            else
+            {
+                disableEffectColor(&texture);
             }
         }
     }
@@ -46,7 +51,7 @@ bool MouseButtonSystem::isMouseInside(Vector2 mousePos, Vector2 buttonPos, const
         return false;
     }
     //Mouse is right of the button
-    else if( mousePos.x > buttonPos.x + texture.width)
+    else if( mousePos.x > buttonPos.x + texture.spriteClip.w)
     {
         return false;
     }
@@ -56,10 +61,26 @@ bool MouseButtonSystem::isMouseInside(Vector2 mousePos, Vector2 buttonPos, const
         return false;
     }
     //Mouse below the button
-    else if( mousePos.y > buttonPos.y + texture.height)
+    else if( mousePos.y > buttonPos.y + texture.spriteClip.h)
     {
         return false;
     }
 
     return true;
 }
+
+void MouseButtonSystem::activateHoverColor(TextureComponent* texture)
+{
+    texture->spriteClip.y = texture->spriteClip.h;
+}
+
+void MouseButtonSystem::activatePressColor(TextureComponent* texture)
+{
+    texture->spriteClip.y = texture->spriteClip.h * 2;
+}
+
+void MouseButtonSystem::disableEffectColor(TextureComponent* texture)
+{
+    texture->spriteClip.y = 0.f;
+}
+

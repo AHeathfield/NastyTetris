@@ -15,7 +15,6 @@
 #include "src/Core/ECS.h"
 #include "src/Components/TextureComponent.h"
 #include "src/Components/TransformComponent.h"
-#include "src/States/PlayState.h"
 #include "src/Systems/RenderSystem.h"
 #include "src/Systems/MouseButtonSystem.h"
 
@@ -295,22 +294,8 @@ int main( int argc, char* args[] )
                     //End the main loop
                     quit = true;
                 }
-                mouseButtonSystem->HandleEvent(&e);
 
-                // TEMP: If Key is pressed
-                // else if (e.type == SDL_EVENT_KEY_DOWN)
-                // {
-                //     if (e.key.key == SDLK_RETURN)
-                //     {
-                //         stateChanged = true;
-                //         nextState = new PlayState();
-                //     }
-                //     else if (e.key.key == SDLK_BACKSPACE)
-                //     {
-                //         stateChanged = true;
-                //         nextState = new TitleState();
-                //     }
-                // }
+                mouseButtonSystem->HandleEvent(&e);
             }
 
             renderSystem->Update();

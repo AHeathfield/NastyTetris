@@ -18,7 +18,7 @@ public:
     void Update();
 
     // Renders texture
-    void Render(TransformComponent transfromComponent, TextureComponent textureComponent, SDL_FRect* clip = nullptr, double degrees = 0.0, SDL_FPoint* center = nullptr, SDL_FlipMode flipMode = SDL_FLIP_NONE );
+    void Render(TransformComponent transfromComponent, TextureComponent textureComponent, double degrees = 0.0, SDL_FPoint* center = nullptr, SDL_FlipMode flipMode = SDL_FLIP_NONE );
 
     // Closing stuff
     void Close();

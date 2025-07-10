@@ -14,6 +14,7 @@ bool RenderSystem::Init()
     int screenHeight = 1080;
 
     // TODO: Don't hardcode this...
+    // Only want to use camera as clip when dealing with bg
     mCamera.x = 0.f;
     mCamera.y = 0.f;
     mCamera.w = screenWidth;
@@ -30,8 +31,6 @@ bool RenderSystem::Init()
         SDL_Log( "Window could not be created! SDL error: %s\n", SDL_GetError() );
         return false;
     }
-
-
 
     // Everything initialize good
     return true;
@@ -83,20 +82,25 @@ bool RenderSystem::LoadMedia()
 }
 
 
-void RenderSystem::Render(TransformComponent transfromComponent, TextureComponent textureComponent, SDL_FRect* clip, double degrees, SDL_FPoint* center, SDL_FlipMode flipMode)
+void RenderSystem::Render(TransformComponent transfromComponent, TextureComponent textureComponent, double degrees, SDL_FPoint* center, SDL_FlipMode flipMode)
 {
-    //Set texture position
     SDL_FRect dstRect{ transfromComponent.position.x, transfromComponent.position.y, static_cast<float>(textureComponent.width), static_cast<float>(textureComponent.height) };
 
     //Default to clip dimensions if clip is given
-    if( clip != nullptr )
+    if (textureComponent.isSpriteClip())
     {
-        dstRect.w = clip->w;
-        dstRect.h = clip->h;
+        dstRect.w = textureComponent.spriteClip.w;
+        dstRect.h = textureComponent.spriteClip.h;
+
+        // Render Texture on screen
+        SDL_RenderTextureRotated(mRenderer, textureComponent.texture, &textureComponent.spriteClip, &dstRect, degrees, center, flipMode );
+    }
+    else
+    {
+        // Render Texture on screen
+        SDL_RenderTextureRotated(mRenderer, textureComponent.texture, nullptr, &dstRect, degrees, center, flipMode );
     }
 
-    //Render texture
-    SDL_RenderTextureRotated(mRenderer, textureComponent.texture, clip, &dstRect, degrees, center, flipMode );
 }
 
 

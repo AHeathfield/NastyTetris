@@ -11,8 +11,6 @@ void TitleState::Enter()
             TextureComponent{
                 .texture = nullptr,
                 .path = "src/Assets/titleBG.png",
-                .width = 1920,
-                .height = 1080
             });
 
     gCoordinator.AddComponent(
@@ -29,9 +27,8 @@ void TitleState::Enter()
             mPlayButton,
             TextureComponent{
                 .texture = nullptr,
-                .path = "src/Assets/playButton.png",
-                .width = 517,
-                .height = 183
+                .spriteClip = SDL_FRect{0.f, 0.f, 517.f, 183.f},
+                .path = "src/Assets/playButtonSpriteSheet.png",
             });
     gCoordinator.AddComponent(
             mPlayButton,
@@ -43,7 +40,6 @@ void TitleState::Enter()
     ButtonComponent* button = new StateChangerButton(new PlayState());
     gCoordinator.AddComponent(
             mPlayButton,
-            // Try StateChangerButton{new PlayState()}
             button
             );
     button = nullptr;
