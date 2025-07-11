@@ -5,6 +5,7 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/TetrisGravityComponent.h"
 #include "../Components/BoxColliderComponent.h"
+#include "../Components/MoveComponent.h"
 
 
 class PlayState : public State
@@ -16,5 +17,7 @@ public:
 private:
     Entity mBackground;
     Entity mTestBlock;
-    Entity mBottomCollider;
+    Entity mBottomBoundCollider;
+    Entity mRightBoundCollider;
+    Entity mLeftBoundCollider;
 };

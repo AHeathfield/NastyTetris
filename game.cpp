@@ -17,10 +17,12 @@
 #include "src/Components/TransformComponent.h"
 #include "src/Components/BoxColliderComponent.h"
 #include "src/Components/TetrisGravityComponent.h"
+#include "src/Components/MoveComponent.h"
 #include "src/Systems/RenderSystem.h"
 #include "src/Systems/MouseButtonSystem.h"
 #include "src/Systems/PhysicsSystem.h"
 #include "src/Systems/CollisionSystem.h"
+#include "src/Systems/PlayerEventSystem.h"
 
 // States
 #include "src/States/State.h"
@@ -217,6 +219,10 @@ int main( int argc, char* args[] )
     Timer updateTimer = Timer();
     float deltaTime = 0.8f;
 
+    // Timer to cap frame rate
+    Timer capTimer = Timer();
+    Uint64 renderingNS = 0; // Time spent rendering
+
     // Setting Initial State and next State
     gCurrentState = new TitleState();
     State* prevState = gCurrentState;
@@ -230,6 +236,7 @@ int main( int argc, char* args[] )
     gCoordinator.RegisterComponent<TransformComponent>();
     gCoordinator.RegisterComponent<TetrisGravityComponent>();
     gCoordinator.RegisterComponent<BoxColliderComponent>();
+    gCoordinator.RegisterComponent<MoveComponent>();
     gCoordinator.RegisterComponent<ButtonComponent*>();
 
     // Registering Systems
@@ -272,6 +279,14 @@ int main( int argc, char* args[] )
         gCoordinator.SetSystemSignature<CollisionSystem>(signature);
     }
 
+    // Player Event System
+    auto playerEventSystem = gCoordinator.RegisterSystem<PlayerEventSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<MoveComponent>());
+        signature.set(gCoordinator.GetComponentType<BoxColliderComponent>());
+        gCoordinator.SetSystemSignature<PlayerEventSystem>(signature);
+    }
     // Other systems...
 
 
@@ -306,13 +321,21 @@ int main( int argc, char* args[] )
 
 
         updateTimer.start();
+
         // =================== Main Loop ========================
         while( quit == false )
         {
+            //Start frame time
+            capTimer.start();
 
             // Setting new state
             if (gCurrentState != prevState)
             {
+                // renderSystem->LoadMedia();
+                // prevState = gCurrentState;
+                prevState->Exit();
+                delete prevState;
+                gCurrentState->Enter();
                 renderSystem->LoadMedia();
                 prevState = gCurrentState;
             }
@@ -328,16 +351,26 @@ int main( int argc, char* args[] )
                 }
 
                 mouseButtonSystem->HandleEvent(&e);
+                playerEventSystem->HandleEvent(e);
             }
             
             if (updateTimer.getTimeS() > deltaTime)
             {
                 // Physics will move the colliders, collision will check if there are collisions if so move back to where they were, render draws everything
                 physicsSystem->Update();
-                collisionSystem->Update();
                 updateTimer.reset();
             }
+            collisionSystem->UpdateCollisions();
+            collisionSystem->UpdateTransforms();
             renderSystem->Update();
+
+            // If time remaining in frame
+            constexpr Uint64 nsPerFrame = 1000000000 / kScreenFps; 
+            Uint64 frameNs = capTimer.getTicksNS();
+            if ( frameNs < nsPerFrame)
+            {
+                SDL_DelayNS(nsPerFrame - frameNs);
+            }
         }
         // =======================================================
         gCurrentState->Exit();

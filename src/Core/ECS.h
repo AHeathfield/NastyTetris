@@ -10,6 +10,7 @@
 #include <queue>
 #include <cassert>
 #include <set>
+#include <string>
 #include <unordered_map>
 #include <memory>
 
@@ -66,6 +67,9 @@ public:
         Entity id = mAvailableEntities.front();
         mAvailableEntities.pop();
         mLivingEntityCount++;
+
+        // std::string log = std::to_string(mLivingEntityCount);
+        // SDL_Log(log.c_str());
 
         return id;
     }
@@ -184,6 +188,9 @@ public:
         mIndexToEntityMap[newIndex] = entity;
         mComponentArray[newIndex] = component;
         mSize++;
+
+        // std::string log = std::to_string(mSize);
+        // SDL_Log(log.c_str());
     }
 
     void RemoveData(Entity entity)
@@ -422,7 +429,7 @@ public:
             // Entity signature matches system signature - insert into set (BITWISE AND)
             if ((entitySignature & systemSignature) == systemSignature)
             {
-                SDL_Log("Added entity to system");
+                // SDL_Log("Added entity to system");
                 system->mEntities.insert(entity);
             }
             // Entity signature does not match system signature - erase from set

@@ -1,9 +1,10 @@
 #include "CollisionSystem.h"
 #include <SDL3/SDL_log.h>
+#include <string>
 
 extern Coordinator gCoordinator;
 
-void CollisionSystem::Update()
+void CollisionSystem::UpdateCollisions()
 {
     for (const auto& entityA : mEntities)
     {
@@ -14,22 +15,27 @@ void CollisionSystem::Update()
                 auto& colliderA = gCoordinator.GetComponent<BoxColliderComponent>(entityA);
                 const auto& colliderB = gCoordinator.GetComponent<BoxColliderComponent>(entityB);
 
-                auto& transformA = gCoordinator.GetComponent<TransformComponent>(entityA);
+                const auto& transformA = gCoordinator.GetComponent<TransformComponent>(entityA);
+                // auto& transformB = gCoordinator.GetComponent<TransformComponent>(entityB);
 
                 if (checkCollision(colliderA, colliderB))
                 {
-                    // SDL_Log("COLLISION OCCURING");
-                    // NOTE: if running into issues, just make Collider remember is previous position
-                    
-                    // We will move entityA collision box to where it previously was which we get from its transform
                     colliderA.position = transformA.position;
-                }
-                else
-                {
-                    transformA.position = colliderA.position;
                 }
             }
         }
+    }
+}
+
+
+void CollisionSystem::UpdateTransforms()
+{
+    for (const auto& entity : mEntities)
+    {
+        auto& transform = gCoordinator.GetComponent<TransformComponent>(entity);
+        const auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(entity);
+        
+        transform.position = collider.position;
     }
 }
 
@@ -52,13 +58,13 @@ bool CollisionSystem::checkCollision(const BoxColliderComponent& a, const BoxCol
     float bMaxY = b.position.y + b.h;
 
     //If left side of A is the right of B
-    if( aMinX > bMaxX + spacer )
+    if( aMinX > bMaxX - spacer )
     {
         return false;
     }
 
     //If the right side of A to the left of B
-    if( aMaxX < bMinX - spacer)
+    if( aMaxX < bMinX + spacer)
     {
         return false;
     }

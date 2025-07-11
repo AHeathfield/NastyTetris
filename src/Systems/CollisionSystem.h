@@ -8,7 +8,8 @@
 class CollisionSystem : public System
 {
 public:
-    void Update();
+    void UpdateCollisions();
+    void UpdateTransforms();
 
     bool checkCollision(const BoxColliderComponent& a, const BoxColliderComponent& b);
 };
