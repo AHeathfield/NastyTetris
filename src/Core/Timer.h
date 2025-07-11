@@ -36,6 +36,12 @@ class Timer
             mPausedTicks = 0;
         }
 
+        void reset()
+        {
+            stop();
+            start();
+        }
+
         void pause()
         {
             //If the timer is running and isn't already paused

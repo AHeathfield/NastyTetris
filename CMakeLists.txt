@@ -26,6 +26,7 @@ add_executable(game WIN32 game.cpp
     src/Systems/RenderSystem.cpp
     src/Systems/MouseButtonSystem.cpp
     src/Systems/PhysicsSystem.cpp
+    src/Systems/CollisionSystem.cpp
     src/States/TitleState.cpp
     src/States/PlayState.cpp
     src/Components/Buttons/StateChangerButton.cpp

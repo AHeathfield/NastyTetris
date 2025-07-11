@@ -15,14 +15,19 @@
 #include "src/Core/ECS.h"
 #include "src/Components/TextureComponent.h"
 #include "src/Components/TransformComponent.h"
+#include "src/Components/BoxColliderComponent.h"
 #include "src/Components/TetrisGravityComponent.h"
 #include "src/Systems/RenderSystem.h"
 #include "src/Systems/MouseButtonSystem.h"
 #include "src/Systems/PhysicsSystem.h"
+#include "src/Systems/CollisionSystem.h"
 
 // States
 #include "src/States/State.h"
 #include "src/States/TitleState.h"
+
+// Core
+#include "src/Core/Timer.h"
 
 
 Coordinator gCoordinator;
@@ -208,6 +213,10 @@ int main( int argc, char* args[] )
     // Final exit code
     int exitCode{ 0 };
 
+    // Timer for when we want to run updates
+    Timer updateTimer = Timer();
+    float deltaTime = 0.8f;
+
     // Setting Initial State and next State
     gCurrentState = new TitleState();
     State* prevState = gCurrentState;
@@ -220,6 +229,7 @@ int main( int argc, char* args[] )
     gCoordinator.RegisterComponent<TextureComponent>();
     gCoordinator.RegisterComponent<TransformComponent>();
     gCoordinator.RegisterComponent<TetrisGravityComponent>();
+    gCoordinator.RegisterComponent<BoxColliderComponent>();
     gCoordinator.RegisterComponent<ButtonComponent*>();
 
     // Registering Systems
@@ -248,9 +258,18 @@ int main( int argc, char* args[] )
     auto physicsSystem = gCoordinator.RegisterSystem<PhysicsSystem>();
     {
         Signature signature;
-        signature.set(gCoordinator.GetComponentType<TransformComponent>());
+        signature.set(gCoordinator.GetComponentType<BoxColliderComponent>());
         signature.set(gCoordinator.GetComponentType<TetrisGravityComponent>());
         gCoordinator.SetSystemSignature<PhysicsSystem>(signature);
+    }
+
+    // Collision System
+    auto collisionSystem = gCoordinator.RegisterSystem<CollisionSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<TransformComponent>());
+        signature.set(gCoordinator.GetComponentType<BoxColliderComponent>());
+        gCoordinator.SetSystemSignature<CollisionSystem>(signature);
     }
 
     // Other systems...
@@ -286,6 +305,7 @@ int main( int argc, char* args[] )
         }
 
 
+        updateTimer.start();
         // =================== Main Loop ========================
         while( quit == false )
         {
@@ -309,8 +329,14 @@ int main( int argc, char* args[] )
 
                 mouseButtonSystem->HandleEvent(&e);
             }
-
-            physicsSystem->Update();
+            
+            if (updateTimer.getTimeS() > deltaTime)
+            {
+                // Physics will move the colliders, collision will check if there are collisions if so move back to where they were, render draws everything
+                physicsSystem->Update();
+                collisionSystem->Update();
+                updateTimer.reset();
+            }
             renderSystem->Update();
         }
         // =======================================================

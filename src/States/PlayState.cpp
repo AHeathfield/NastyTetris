@@ -27,11 +27,10 @@ void PlayState::Enter()
                 .texture = nullptr,
                 .path = "src/Assets/yellowBlock.png",
             });
-
     gCoordinator.AddComponent(
             mTestBlock,
             TransformComponent{
-                .position = Vector2(920.f, 142.f),
+                .position = Vector2(920.f, 140.f),
                 .rotation = Vector2(),
                 .scale = Vector2()
             });
@@ -39,6 +38,27 @@ void PlayState::Enter()
             mTestBlock,
             TetrisGravityComponent{
                 .gravity = 40.f
+            });
+    gCoordinator.AddComponent(
+            mTestBlock,
+            BoxColliderComponent{
+                .position = Vector2(920.f, 140.f),
+                .w = 40.f,
+                .h = 40.f
+            });
+
+    mBottomCollider = gCoordinator.CreateEntity();
+    gCoordinator.AddComponent(
+            mBottomCollider,
+            BoxColliderComponent{
+                .position = Vector2(720.f, 940.f),
+                .w = static_cast<float>(1200 - 720),
+                .h = 40.f
+            });
+    gCoordinator.AddComponent(
+            mBottomCollider,
+            TransformComponent{
+                .position = Vector2(720.f, 940.f),
             });
 }
 

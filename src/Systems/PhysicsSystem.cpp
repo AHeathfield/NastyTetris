@@ -4,26 +4,11 @@ extern Coordinator gCoordinator;
 
 void PhysicsSystem::Update()
 {
-    if (mTimer.isStarted())
+    for (const auto& entity : mEntities)
     {
-        if (mTimer.getTimeS() > mDeltaTime)
-        {
-            mTimer.stop();
-            for (const auto& entity : mEntities)
-            {
-                auto& transform = gCoordinator.GetComponent<TransformComponent>(entity);
-                auto& gravityComponent = gCoordinator.GetComponent<TetrisGravityComponent>(entity);
+        auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(entity);
+        const auto& gravityComponent = gCoordinator.GetComponent<TetrisGravityComponent>(entity);
 
-                transform.position.y += gravityComponent.gravity;
-
-                // auto* pTransform = &transform;
-                // pTransform->position.y += gravityComponent.gravity;
-            }
-        }
+        collider.position.y += gravityComponent.gravity;
     }
-    else
-    {
-        mTimer.start();
-    }
-
 }

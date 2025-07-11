@@ -1,16 +1,13 @@
 #pragma once
 
 #include "../Core/ECS.h"
-    #include "../Core/Timer.h"
-#include "../Components/TransformComponent.h"
+#include "../Core/Timer.h"
+#include "../Components/BoxColliderComponent.h"
 #include "../Components/TetrisGravityComponent.h"
 
+// The Physics System will update the entities Collider
 class PhysicsSystem : public System
 {
 public:
     void Update();
-    
-private:
-    Timer mTimer = Timer();
-    float mDeltaTime = 0.8f; // Amount of time before next update
 };
