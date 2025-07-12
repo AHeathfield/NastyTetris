@@ -7,4 +7,5 @@ struct BoxColliderComponent
     Vector2 position;
     float w;
     float h;
+    bool isBottomCollision = false;
 };

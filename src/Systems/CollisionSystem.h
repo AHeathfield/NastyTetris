@@ -12,4 +12,5 @@ public:
     void UpdateTransforms();
 
     bool checkCollision(const BoxColliderComponent& a, const BoxColliderComponent& b);
+    bool isBottomColliding(const BoxColliderComponent& a, const BoxColliderComponent& b);
 };

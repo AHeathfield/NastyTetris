@@ -18,11 +18,13 @@
 #include "src/Components/BoxColliderComponent.h"
 #include "src/Components/TetrisGravityComponent.h"
 #include "src/Components/MoveComponent.h"
+
 #include "src/Systems/RenderSystem.h"
 #include "src/Systems/MouseButtonSystem.h"
 #include "src/Systems/PhysicsSystem.h"
 #include "src/Systems/CollisionSystem.h"
 #include "src/Systems/PlayerEventSystem.h"
+#include "src/Systems/PlayerCollisionSystem.h"
 
 // States
 #include "src/States/State.h"
@@ -287,6 +289,15 @@ int main( int argc, char* args[] )
         signature.set(gCoordinator.GetComponentType<BoxColliderComponent>());
         gCoordinator.SetSystemSignature<PlayerEventSystem>(signature);
     }
+
+    // Player Collision System
+    auto playerCollisionSystem = gCoordinator.RegisterSystem<PlayerCollisionSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<MoveComponent>());
+        signature.set(gCoordinator.GetComponentType<BoxColliderComponent>());
+        gCoordinator.SetSystemSignature<PlayerCollisionSystem>(signature);
+    }
     // Other systems...
 
 
@@ -361,6 +372,7 @@ int main( int argc, char* args[] )
                 updateTimer.reset();
             }
             collisionSystem->UpdateCollisions();
+            playerCollisionSystem->Update();
             collisionSystem->UpdateTransforms();
             renderSystem->Update();
 

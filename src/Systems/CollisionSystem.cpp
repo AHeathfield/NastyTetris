@@ -20,6 +20,7 @@ void CollisionSystem::UpdateCollisions()
 
                 if (checkCollision(colliderA, colliderB))
                 {
+                    colliderA.isBottomCollision = isBottomColliding(colliderA, colliderB);
                     colliderA.position = transformA.position;
                 }
             }
@@ -82,4 +83,34 @@ bool CollisionSystem::checkCollision(const BoxColliderComponent& a, const BoxCol
     }
 
     return true;
+}
+
+bool CollisionSystem::isBottomColliding(const BoxColliderComponent& a, const BoxColliderComponent& b)
+{
+    // To help with inaccuracies
+    float spacer = 2.f;
+
+    //Calculate the sides of rect A
+    float aMinX = a.position.x;
+    float aMaxX = a.position.x + a.w;
+    float aMinY = a.position.y;
+    float aMaxY = a.position.y + a.h;
+
+    //Calculate the sides of rect B
+    float bMinX = b.position.x;
+    float bMaxX = b.position.x + b.w;
+    float bMinY = b.position.y;
+    float bMaxY = b.position.y + b.h;
+
+    // Check if its a side wall
+    if ((bMaxX - spacer < 760.f) || (bMinX + spacer > 1160.f))
+    {
+        return false;
+    }
+
+
+    // std::string log = "aMax: " + std::to_string(aMaxY) + " bMax: " + std::to_string(bMaxY);
+    // SDL_Log(log.c_str());
+
+    return (aMaxY - spacer > bMinY);
 }

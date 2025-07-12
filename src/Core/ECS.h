@@ -498,10 +498,25 @@ public:
     }
 
     template<typename T>
+    void RemoveComponent(Entity entity)
+    {
+
+        mComponentManager->RemoveComponent<T>(entity);
+
+        auto signature = mEntityManager->GetSignature(entity);
+        signature.set(mComponentManager->GetComponentType<T>(), false);
+        mEntityManager->SetSignature(entity, signature);
+
+        mSystemManager->EntitySignatureChanged(entity, signature);
+    }
+
+
+    template<typename T>
     T& GetComponent(Entity entity)
     {
         return mComponentManager->GetComponent<T>(entity);
     }
+
 
     template<typename T>
     ComponentType GetComponentType()
