@@ -5,7 +5,7 @@
 struct BoxColliderComponent
 {
     Vector2 position;
-    float w;
-    float h;
+    int w;
+    int h;
     bool isBottomCollision = false;
 };

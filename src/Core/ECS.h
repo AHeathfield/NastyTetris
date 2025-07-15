@@ -222,6 +222,11 @@ public:
         return mComponentArray[mEntityToIndexMap[entity]];
     }
 
+    bool HasComponent(Entity entity)
+    {
+        return (mEntityToIndexMap.find(entity) != mEntityToIndexMap.end());
+    }
+
     void EntityDestroyed(Entity entity) override
     {
         if (mEntityToIndexMap.find(entity) != mEntityToIndexMap.end())
@@ -304,6 +309,12 @@ public:
     {
         // Get a reference to a component from the array for an entity
         return GetComponentArray<T>()->GetData(entity);
+    }
+
+    template<typename T>
+    bool HasComponent(Entity entity)
+    {
+        return GetComponentArray<T>()->HasComponent(entity);
     }
 
     void EntityDestroyed(Entity entity)
@@ -500,7 +511,6 @@ public:
     template<typename T>
     void RemoveComponent(Entity entity)
     {
-
         mComponentManager->RemoveComponent<T>(entity);
 
         auto signature = mEntityManager->GetSignature(entity);
@@ -515,6 +525,12 @@ public:
     T& GetComponent(Entity entity)
     {
         return mComponentManager->GetComponent<T>(entity);
+    }
+
+    template<typename T>
+    bool HasComponent(Entity entity)
+    {
+        return mComponentManager->HasComponent<T>(entity);
     }
 
 
