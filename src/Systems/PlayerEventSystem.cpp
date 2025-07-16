@@ -2,33 +2,43 @@
 
 extern Coordinator gCoordinator;
 
-void PlayerEventSystem::HandleEvent(SDL_Event e)
+void PlayerEventSystem::HandleEvent(SDL_Event e, Shape* currentShape)
 {
     if (e.type == SDL_EVENT_KEY_DOWN)
     {
-        for (const auto& entity : mEntities)
+        if (e.key.key == SDLK_UP && currentShape != nullptr)
         {
-            // TODO: Use command pattern!
-            if (e.key.key == SDLK_LEFT)
-            {
-                auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(entity);
-                const auto& moveComponent = gCoordinator.GetComponent<MoveComponent>(entity);
+            SDL_Log("Rotating");
+            currentShape->Rotate();
+            currentShape->isRotated = true;
+        }
 
-                collider.position.x -= moveComponent.distance;
-            }
-            else if (e.key.key == SDLK_RIGHT)
+        else
+        {
+            for (const auto& entity : mEntities)
             {
-                auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(entity);
-                const auto& moveComponent = gCoordinator.GetComponent<MoveComponent>(entity);
+                // TODO: Use command pattern!
+                if (e.key.key == SDLK_LEFT)
+                {
+                    auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(entity);
+                    const auto& moveComponent = gCoordinator.GetComponent<MoveComponent>(entity);
 
-                collider.position.x += moveComponent.distance;
-            }
-            else if (e.key.key == SDLK_DOWN)
-            {
-                auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(entity);
-                const auto& moveComponent = gCoordinator.GetComponent<MoveComponent>(entity);
+                    collider.position.x -= moveComponent.distance;
+                }
+                else if (e.key.key == SDLK_RIGHT)
+                {
+                    auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(entity);
+                    const auto& moveComponent = gCoordinator.GetComponent<MoveComponent>(entity);
 
-                collider.position.y += moveComponent.distance;
+                    collider.position.x += moveComponent.distance;
+                }
+                else if (e.key.key == SDLK_DOWN)
+                {
+                    auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(entity);
+                    const auto& moveComponent = gCoordinator.GetComponent<MoveComponent>(entity);
+
+                    collider.position.y += moveComponent.distance;
+                }
             }
         }
     }

@@ -5,9 +5,10 @@
 
 #include "../Components/BoxColliderComponent.h"
 #include "../Components/MoveComponent.h"
+#include "../Shapes/Shape.h"
 
 class PlayerEventSystem : public System
 {
 public:
-    void HandleEvent(SDL_Event e);
+    void HandleEvent(SDL_Event e, Shape* currentShape);
 };

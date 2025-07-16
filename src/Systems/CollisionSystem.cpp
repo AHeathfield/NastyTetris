@@ -4,7 +4,7 @@
 
 extern Coordinator gCoordinator;
 
-void CollisionSystem::UpdateCollisions()
+void CollisionSystem::UpdateCollisions(Shape* currentShape)
 {
     // const std::set<Entity> entitiesCopy = mEntities;
     std::set<Entity> moveEntities;
@@ -30,6 +30,7 @@ void CollisionSystem::UpdateCollisions()
                         isCollision = checkCollision(colliderA, colliderB);
                         if (isCollision)
                         {
+                            // SDL_Log("Collision!");
                             checkCollisionSide(colliderA, colliderB);
                             if (mCollisionSide == BOTTOM)
                             {
@@ -58,7 +59,7 @@ void CollisionSystem::UpdateCollisions()
     {
         auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(entity);
         collider.position = collider.position + mMoveMoves;
-
+        
         if (stopMoving)
         {
             gCoordinator.RemoveComponent<MoveComponent>(entity);
@@ -66,6 +67,16 @@ void CollisionSystem::UpdateCollisions()
         }
     }
     mMoveMoves = Vector2();
+
+    // Need to increment rotation if shape rotated and no collision
+    if (currentShape != nullptr)
+    {
+        if (!isCollision && currentShape->isRotated)
+        {
+            currentShape->IncrementRotation();
+            currentShape->isRotated = false;
+        }
+    }
 }
 
 // void CollisionSystem::UpdateCollisions()

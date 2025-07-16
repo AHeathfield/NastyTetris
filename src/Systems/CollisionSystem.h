@@ -6,13 +6,14 @@
 #include "../Components/MoveComponent.h"
 #include "../Components/BoundaryComponent.h"
 #include "../Components/TetrisGravityComponent.h"
+#include "../Shapes/Shape.h"
 #include <set>
 
 // The collision system will update the entities transform
 class CollisionSystem : public System
 {
 public:
-    void UpdateCollisions();
+    void UpdateCollisions(Shape* currentShape);
     void UpdateTransforms();
     void UpdateMoveComponents();
 

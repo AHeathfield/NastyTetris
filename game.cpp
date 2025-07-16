@@ -10,6 +10,7 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <string>
 #include <sstream>
+#include <typeinfo>
 
 // ECS
 #include "src/Core/ECS.h"
@@ -25,10 +26,12 @@
 #include "src/Systems/PhysicsSystem.h"
 #include "src/Systems/CollisionSystem.h"
 #include "src/Systems/PlayerEventSystem.h"
+#include "src/Systems/ShapeSystem.h"
 
 // States
 #include "src/States/State.h"
 #include "src/States/TitleState.h"
+#include "src/States/PlayState.h"
 
 // Core
 #include "src/Core/Timer.h"
@@ -291,6 +294,14 @@ int main( int argc, char* args[] )
         gCoordinator.SetSystemSignature<PlayerEventSystem>(signature);
     }
 
+    // Shape System
+    auto shapeSystem = gCoordinator.RegisterSystem<ShapeSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<MoveComponent>());
+        gCoordinator.SetSystemSignature<ShapeSystem>(signature);
+    }
+
     // Other systems...
 
 
@@ -344,6 +355,16 @@ int main( int argc, char* args[] )
                 prevState = gCurrentState;
             }
 
+            // This loads the new Shape
+            if (typeid(*gCurrentState) == typeid(PlayState))
+            {
+                bool isNewShape = shapeSystem->Update();
+                if (isNewShape)
+                {
+                    renderSystem->LoadMedia();
+                }
+            }
+
             //Get event data
             while( SDL_PollEvent( &e ) == true )
             {
@@ -355,7 +376,7 @@ int main( int argc, char* args[] )
                 }
 
                 mouseButtonSystem->HandleEvent(&e);
-                playerEventSystem->HandleEvent(e);
+                playerEventSystem->HandleEvent(e, shapeSystem->currentShape);
             }
             
             if (updateTimer.getTimeS() > deltaTime)
@@ -365,7 +386,7 @@ int main( int argc, char* args[] )
                 updateTimer.reset();
             }
             // playerCollisionSystem->Update();
-            collisionSystem->UpdateCollisions();
+            collisionSystem->UpdateCollisions(shapeSystem->currentShape);
             // collisionSystem->UpdateMoveComponents();
             collisionSystem->UpdateTransforms();
             renderSystem->Update();

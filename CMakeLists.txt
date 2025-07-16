@@ -28,9 +28,11 @@ add_executable(game WIN32 game.cpp
     src/Systems/PhysicsSystem.cpp
     src/Systems/CollisionSystem.cpp
     src/Systems/PlayerEventSystem.cpp
+    src/Systems/ShapeSystem.cpp
     src/States/TitleState.cpp
     src/States/PlayState.cpp
     src/Components/Buttons/StateChangerButton.cpp
+    src/Shapes/LShape.cpp
     )
 
 # Link to the actual SDL3 library.
