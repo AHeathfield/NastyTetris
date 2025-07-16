@@ -5,7 +5,8 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/MoveComponent.h"
 #include "../Components/BoundaryComponent.h"
-#include <vector>
+#include "../Components/TetrisGravityComponent.h"
+#include <set>
 
 // The collision system will update the entities transform
 class CollisionSystem : public System
@@ -28,5 +29,7 @@ private:
     };
 
     enum CollisionSide mCollisionSide;
-    std::vector<Entity> mRemoveMoveArray;
+    std::set<Entity> mMoveSet;
+    Vector2 mMoveMoves = Vector2();
+    bool mRemoveMoves = false;
 };

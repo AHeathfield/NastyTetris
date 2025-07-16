@@ -366,7 +366,7 @@ int main( int argc, char* args[] )
             }
             // playerCollisionSystem->Update();
             collisionSystem->UpdateCollisions();
-            collisionSystem->UpdateMoveComponents();
+            // collisionSystem->UpdateMoveComponents();
             collisionSystem->UpdateTransforms();
             renderSystem->Update();
 

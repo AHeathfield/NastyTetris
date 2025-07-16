@@ -6,47 +6,129 @@ extern Coordinator gCoordinator;
 
 void CollisionSystem::UpdateCollisions()
 {
-    for (const auto& entityA : mEntities)
+    const std::set<Entity> entitiesCopy = mEntities;
+    std::set<Entity> moveEntities;
+    bool isCollision = false;
+    bool stopMoving = false;
+
+    for (const auto& entityA : entitiesCopy)
     {
-        for (const auto& entityB : mEntities)
+        if (gCoordinator.HasComponent<MoveComponent>(entityA))
         {
-            if (entityA != entityB)
+            moveEntities.insert(entityA);
+
+            if (!isCollision)
             {
-                auto& colliderA = gCoordinator.GetComponent<BoxColliderComponent>(entityA);
-                const auto& colliderB = gCoordinator.GetComponent<BoxColliderComponent>(entityB);
-
-                const auto& transformA = gCoordinator.GetComponent<TransformComponent>(entityA);
-
-                // if its collisions in the moving shape ignore them
-                // bool isMovingShape = gCoordinator.HasComponent<MoveComponent>(entityA) && gCoordinator.HasComponent<MoveComponent>(entityB);
-                // if (checkCollision(colliderA, colliderB) && !isMovingShape)
-                if (checkCollision(colliderA, colliderB))
+                for (const auto& entityB : entitiesCopy)
                 {
-                    checkCollisionSide(colliderA, colliderB);
-                    // SDL_Log(std::to_string(colliderA.position.y).c_str());
-                    // colliderA.isBottomCollision = isBottomColliding(colliderA, colliderB);
-                    // colliderA.position = transformA.position;
-                    bool notBoundaryA = !(gCoordinator.HasComponent<BoundaryComponent>(entityA));
-                    // if (isBottomColliding(colliderA, colliderB) && notBoundaryA)
-                    if (mCollisionSide == BOTTOM && notBoundaryA)
+                    // if entityB does not have MoveComponent
+                    if (entityA != entityB && !gCoordinator.HasComponent<MoveComponent>(entityB))
                     {
-                        if (gCoordinator.HasComponent<MoveComponent>(entityA))
+                        auto& colliderA = gCoordinator.GetComponent<BoxColliderComponent>(entityA);
+                        const auto& colliderB = gCoordinator.GetComponent<BoxColliderComponent>(entityB);
+
+                        isCollision = checkCollision(colliderA, colliderB);
+                        if (isCollision)
                         {
-                            mRemoveMoveArray.push_back(entityA);
+                            checkCollisionSide(colliderA, colliderB);
+                            if (mCollisionSide == BOTTOM)
+                            {
+                                mMoveMoves.y = -40.f;
+                                stopMoving = true;
+                            }
+                            else if (mCollisionSide == LEFT)
+                            {
+                                mMoveMoves.x = 40.f;
+                                break;
+                            }
+                            else if (mCollisionSide == RIGHT)
+                            {
+                                mMoveMoves.x = -40.f;
+                                break;
+                            }
                         }
-                        // I think could move colliderA.pos.y = transformA...
-                        // colliderA.position.y = colliderB.position.y - 40.f;
-                        colliderA.position.y = transformA.position.y;
-                    }
-                    else if ((mCollisionSide == LEFT || mCollisionSide == RIGHT)  && notBoundaryA)
-                    {
-                        colliderA.position.x = transformA.position.x;
                     }
                 }
             }
         }
     }
+
+    // Update the components
+    for (const auto& entity : moveEntities)
+    {
+        auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(entity);
+        collider.position = collider.position + mMoveMoves;
+
+        if (stopMoving)
+        {
+            gCoordinator.RemoveComponent<MoveComponent>(entity);
+            gCoordinator.RemoveComponent<TetrisGravityComponent>(entity);
+        }
+    }
+    mMoveMoves = Vector2();
 }
+
+// void CollisionSystem::UpdateCollisions()
+// {
+//     bool isCollision = false;
+//     for (const auto& entityA : mEntities)
+//     {
+//         for (const auto& entityB : mEntities)
+//         {
+//             if (entityA != entityB)
+//             {
+//                 auto& colliderA = gCoordinator.GetComponent<BoxColliderComponent>(entityA);
+//                 const auto& colliderB = gCoordinator.GetComponent<BoxColliderComponent>(entityB);
+//
+//                 const auto& transformA = gCoordinator.GetComponent<TransformComponent>(entityA);
+//
+//                 // bool isMovingShape = gCoordinator.HasComponent<MoveComponent>(entityA) && gCoordinator.HasComponent<MoveComponent>(entityB);
+//                 // Current problem is that it doesn't remove all the MoveComponents I think
+//                 isCollision = checkCollision(colliderA, colliderB);
+//                 if (isCollision)
+//                 {
+//
+//                     checkCollisionSide(colliderA, colliderB);
+//                     // SDL_Log(std::to_string(colliderA.position.y).c_str());
+//                     // colliderA.isBottomCollision = isBottomColliding(colliderA, colliderB);
+//                     // colliderA.position = transformA.position;
+//                     bool notBoundaryA = !(gCoordinator.HasComponent<BoundaryComponent>(entityA));
+//                     // if (isBottomColliding(colliderA, colliderB) && notBoundaryA)
+//                     if (mCollisionSide == BOTTOM && notBoundaryA)
+//                     {
+//                         if (gCoordinator.HasComponent<MoveComponent>(entityA))
+//                         {
+//                             // mMoveSet.insert(entityA);
+//                             SDL_Log("Bottom Collision");
+//                             mRemoveMoves = true;
+//                             mMoveMoves.y = -40.f;
+//                             break;
+//                         }
+//                         // colliderA.position.y = transformA.position.y;
+//                     }
+//                     // else if ((mCollisionSide == LEFT || mCollisionSide == RIGHT)  && notBoundaryA)
+//                     // {
+//                     //     colliderA.position.x = transformA.position.x;
+//                     // }
+//                     else if (mCollisionSide == LEFT && notBoundaryA)
+//                     {
+//                         mMoveMoves.x = 40.f;
+//                         break;
+//                     }
+//                     else if (mCollisionSide == RIGHT && notBoundaryA)
+//                     {
+//                         mMoveMoves.x = -40.f;
+//                         break;
+//                     }
+//                 }
+//             }
+//         }
+//         if (mRemoveMoves || isCollision)
+//         {
+//             break;
+//         }
+//     }
+// }
 
 
 void CollisionSystem::UpdateTransforms()
@@ -55,18 +137,35 @@ void CollisionSystem::UpdateTransforms()
     {
         auto& transform = gCoordinator.GetComponent<TransformComponent>(entity);
         const auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(entity);
-        
         transform.position = collider.position;
     }
 }
 
 void CollisionSystem::UpdateMoveComponents()
 {
-    for (const auto& entity : mRemoveMoveArray)
+    // Fills the set with all the entities with MoveComponent
+    for (const auto& entity : mEntities)
     {
-        gCoordinator.RemoveComponent<MoveComponent>(entity);
+        if (gCoordinator.HasComponent<MoveComponent>(entity))
+        {
+            mMoveSet.insert(entity);
+        }
     }
-    mRemoveMoveArray.clear();
+
+    for (const auto& entity : mMoveSet)
+    {
+        auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(entity);
+        collider.position = collider.position + mMoveMoves;
+
+        if (mRemoveMoves)
+        {
+            gCoordinator.RemoveComponent<MoveComponent>(entity);
+            gCoordinator.RemoveComponent<TetrisGravityComponent>(entity);
+        }
+    }
+    mRemoveMoves = false;
+    mMoveSet.clear();
+    mMoveMoves = Vector2();
 }
 
 void CollisionSystem::checkCollisionSide(const BoxColliderComponent& a, const BoxColliderComponent& b)
