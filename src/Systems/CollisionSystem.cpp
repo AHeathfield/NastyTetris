@@ -6,12 +6,12 @@ extern Coordinator gCoordinator;
 
 void CollisionSystem::UpdateCollisions()
 {
-    const std::set<Entity> entitiesCopy = mEntities;
+    // const std::set<Entity> entitiesCopy = mEntities;
     std::set<Entity> moveEntities;
     bool isCollision = false;
     bool stopMoving = false;
 
-    for (const auto& entityA : entitiesCopy)
+    for (const auto& entityA : mEntities)
     {
         if (gCoordinator.HasComponent<MoveComponent>(entityA))
         {
@@ -19,7 +19,7 @@ void CollisionSystem::UpdateCollisions()
 
             if (!isCollision)
             {
-                for (const auto& entityB : entitiesCopy)
+                for (const auto& entityB : mEntities)
                 {
                     // if entityB does not have MoveComponent
                     if (entityA != entityB && !gCoordinator.HasComponent<MoveComponent>(entityB))
