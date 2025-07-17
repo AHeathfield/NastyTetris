@@ -33,6 +33,12 @@ add_executable(game WIN32 game.cpp
     src/States/PlayState.cpp
     src/Components/Buttons/StateChangerButton.cpp
     src/Shapes/LShape.cpp
+    src/Shapes/ReverseLShape.cpp
+    src/Shapes/TShape.cpp
+    src/Shapes/ZShape.cpp
+    src/Shapes/ReverseZShape.cpp
+    src/Shapes/LineShape.cpp
+    src/Shapes/SquareShape.cpp
     )
 
 # Link to the actual SDL3 library.

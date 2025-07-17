@@ -8,7 +8,6 @@ void PlayerEventSystem::HandleEvent(SDL_Event e, Shape* currentShape)
     {
         if (e.key.key == SDLK_UP && currentShape != nullptr)
         {
-            SDL_Log("Rotating");
             currentShape->Rotate();
             currentShape->isRotated = true;
         }
