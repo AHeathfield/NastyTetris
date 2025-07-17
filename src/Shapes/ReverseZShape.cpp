@@ -9,7 +9,8 @@ void ReverseZShape::Init()
             mBlock1,
             TextureComponent{
                 .texture = nullptr,
-                .path = "src/Assets/yellowBlock.png",
+                .spriteClip = SDL_FRect{80.f, 40.f, 40.f, 40.f},
+                .path = "src/Assets/BlockSpriteSheet.png",
             });
     gCoordinator.AddComponent(
             mBlock1,
@@ -41,7 +42,8 @@ void ReverseZShape::Init()
             mBlock2,
             TextureComponent{
                 .texture = nullptr,
-                .path = "src/Assets/yellowBlock.png",
+                .spriteClip = SDL_FRect{80.f, 40.f, 40.f, 40.f},
+                .path = "src/Assets/BlockSpriteSheet.png",
             });
     gCoordinator.AddComponent(
             mBlock2,
@@ -73,7 +75,8 @@ void ReverseZShape::Init()
             mBlock3,
             TextureComponent{
                 .texture = nullptr,
-                .path = "src/Assets/yellowBlock.png",
+                .spriteClip = SDL_FRect{80.f, 40.f, 40.f, 40.f},
+                .path = "src/Assets/BlockSpriteSheet.png",
             });
     gCoordinator.AddComponent(
             mBlock3,
@@ -105,7 +108,8 @@ void ReverseZShape::Init()
             mBlock4,
             TextureComponent{
                 .texture = nullptr,
-                .path = "src/Assets/yellowBlock.png",
+                .spriteClip = SDL_FRect{80.f, 40.f, 40.f, 40.f},
+                .path = "src/Assets/BlockSpriteSheet.png",
             });
     gCoordinator.AddComponent(
             mBlock4,

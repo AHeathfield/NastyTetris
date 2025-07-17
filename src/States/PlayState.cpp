@@ -38,14 +38,14 @@ void PlayState::Enter()
             mBottomBoundCollider,
             BoundaryComponent{
             });
-    // If I want to see the invis collider
-    gCoordinator.AddComponent(
-            mBottomBoundCollider,
-            TextureComponent{
-                .texture = nullptr,
-                .spriteClip = SDL_FRect{0.f, 0.f, 480.f, 40.f},
-                .path = "src/Assets/debug.png",
-            });
+    // // If I want to see the invis collider
+    // gCoordinator.AddComponent(
+    //         mBottomBoundCollider,
+    //         TextureComponent{
+    //             .texture = nullptr,
+    //             .spriteClip = SDL_FRect{0.f, 0.f, 480.f, 40.f},
+    //             .path = "src/Assets/debug.png",
+    //         });
 
 
     mRightBoundCollider = gCoordinator.CreateEntity();
@@ -77,13 +77,13 @@ void PlayState::Enter()
                 .position = Vector2(720.f, 100.f),
             });
     // If I want to see the invis collider
-    gCoordinator.AddComponent(
-            mLeftBoundCollider,
-            TextureComponent{
-                .texture = nullptr,
-                .spriteClip = SDL_FRect{0.f, 0.f, 40.f, 840.f},
-                .path = "src/Assets/debug.png",
-            });
+    // gCoordinator.AddComponent(
+    //         mLeftBoundCollider,
+    //         TextureComponent{
+    //             .texture = nullptr,
+    //             .spriteClip = SDL_FRect{0.f, 0.f, 40.f, 840.f},
+    //             .path = "src/Assets/debug.png",
+    //         });
 
     // Shape* test = new LShape();
     // test->Init();
