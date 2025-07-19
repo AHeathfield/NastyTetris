@@ -6,7 +6,6 @@ extern Coordinator gCoordinator;
 
 void CollisionSystem::UpdateCollisions(Shape* currentShape)
 {
-    // const std::set<Entity> entitiesCopy = mEntities;
     std::set<Entity> moveEntities;
     mNeedRecheck = false;
     mStopMoving = false;
@@ -42,20 +41,12 @@ void CollisionSystem::UpdateCollisions(Shape* currentShape)
             // log = "tempAColl.x = " + std::to_string(tempColliderA.position.x);
             // SDL_Log(log.c_str());
 
-
-            // bool tempCollisionLeft = mCollisionLeft;
-            // bool tempCollisionRight = mCollisionRight;
-            
             // So we don't have repeats of special case, also mMoveMoves.x is already the correct value
             mCollisionRight = false;
             mCollisionLeft = false;
 
             // This will update the mMoveMoves.y to the proper value
             checkEntityCollision(entityA, tempColliderA, currentShape);
-
-            // CheckEntityCollision will change these values so setitng them back
-            // mCollisionLeft = tempCollisionLeft;
-            // mCollisionRight = tempCollisionRight;
         }
     }
 
@@ -222,64 +213,25 @@ void CollisionSystem::checkEntityCollision(Entity entityA, const BoxColliderComp
                     if (mCollisionBottom && (mCollisionLeft || mCollisionRight) && !mNeedRecheck)
                     {
                         mNeedRecheck = true;
-                        std::string log = "aColl.x = " + std::to_string(colliderA.position.x) + ", aColl.y = " + std::to_string(colliderA.position.y) + ", aTrans.x = " + std::to_string(transformA.position.x) + ", aTrans.y = " + std::to_string(transformA.position.y) + "\n bColl.x = " + std::to_string(colliderB.position.x) + ", bColl.y = " + std::to_string(colliderB.position.y);
-                        SDL_Log(log.c_str());
-                        
-
-
-                        // BoxColliderComponent tempColliderA{ Vector2(transformA.position.x, colliderA.position.y), colliderA.w, colliderA.h };
-                        // log = "tempAColl.x = " + std::to_string(tempColliderA.position.x);
+                        // std::string log = "aColl.x = " + std::to_string(colliderA.position.x) + ", aColl.y = " + std::to_string(colliderA.position.y) + ", aTrans.x = " + std::to_string(transformA.position.x) + ", aTrans.y = " + std::to_string(transformA.position.y) + "\n bColl.x = " + std::to_string(colliderB.position.x) + ", bColl.y = " + std::to_string(colliderB.position.y);
                         // SDL_Log(log.c_str());
-                        // // Vector2 realTransformPosA = Vector2(transformA.position.x, transformA.position.y + 40.f);
-                        // // colliderA.position.x = transformA.position.x;
-                        // bool tempCollisionLeft = mCollisionLeft;
-                        // bool tempCollisionRight = mCollisionRight;
-                        // mCollisionBottom = false;
-                        // mCollisionRight = false;
-                        // mCollisionLeft = false;
-                        // First we need to check if the block didn't move to the side would there still be a bottom collision
-                        // if (checkCollision(tempColliderA, colliderB))
-                        // {
-                        //     // if there is a collision in this case, it has to a bottom collision
-                        //     SDL_Log("Special Case");
-                        //     mCollisionBottom = true;
-                        //     // checkCollisionSide(tempColliderA.position, transformA.position, transformB.position);
-                        // }
-
-                        // This checks if there is a bottom collision if the collider wasnt moved to the side at all so we can stop moving the shape
-                        // if (!checkEntityCollision(entityA, tempColliderA, currentShape))
-                        // {
-                        //     SDL_Log("Special case");
-                        //     mCollisionBottom = false;
-                        // }
-                        // else
-                        // {
-                        //     // This is just to be explicit, if it gets here there has to be a bottom collision
-                        //     mCollisionBottom = true;
-                        // }
-                        //
-                        // // CheckEntityCollision will change these values so setitng them back
-                        // mCollisionLeft = tempCollisionLeft;
-                        // mCollisionRight = tempCollisionRight;
                     }
 
                     if (mCollisionBottom)
                     {
-                        SDL_Log("BOTTOM!");
+                        // SDL_Log("BOTTOM!");
 
                         mMoveMoves.y = -40.f;
                         mStopMoving = true;
                     }
                     if (mCollisionLeft)
                     {
-                        SDL_Log("LEFT!");
+                        // SDL_Log("LEFT!");
                         mMoveMoves.x = 40.f;
-                        // break;
                     }
                     if (mCollisionRight)
                     {
                         mMoveMoves.x = -40.f;
-                        // break;
                     }
                 }
             }
