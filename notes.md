@@ -23,3 +23,10 @@
     - The zig zag and L also have a mirrored version
 
 - 20 blocks tall, 10 wide
+
+
+
+
+
+# NEXT TIME
+- limit how fast the hold down key is

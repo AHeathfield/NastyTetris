@@ -329,6 +329,7 @@ public:
         }
     }
 
+
 private:
      // Map from type string pointer to a component type
     std::unordered_map<const char*, ComponentType> mComponentTypes;

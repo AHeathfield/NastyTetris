@@ -8,8 +8,11 @@ void CollisionSystem::UpdateCollisions(Shape* currentShape)
 {
     // const std::set<Entity> entitiesCopy = mEntities;
     std::set<Entity> moveEntities;
-    bool isCollision = false;
-    bool stopMoving = false;
+    mNeedRecheck = false;
+    mStopMoving = false;
+    mCollisionBottom = false;
+    mCollisionLeft = false;
+    mCollisionRight = false;
 
     for (const auto& entityA : mEntities)
     {
@@ -17,40 +20,42 @@ void CollisionSystem::UpdateCollisions(Shape* currentShape)
         {
             moveEntities.insert(entityA);
 
-            if (!isCollision)
-            {
-                for (const auto& entityB : mEntities)
-                {
-                    // if entityB does not have MoveComponent
-                    if (entityA != entityB && !gCoordinator.HasComponent<MoveComponent>(entityB))
-                    {
-                        auto& colliderA = gCoordinator.GetComponent<BoxColliderComponent>(entityA);
-                        const auto& colliderB = gCoordinator.GetComponent<BoxColliderComponent>(entityB);
+            const auto& colliderA = gCoordinator.GetComponent<BoxColliderComponent>(entityA);
 
-                        isCollision = checkCollision(colliderA, colliderB);
-                        if (isCollision)
-                        {
-                            // SDL_Log("Collision!");
-                            checkCollisionSide(colliderA, colliderB);
-                            if (mCollisionSide == BOTTOM)
-                            {
-                                mMoveMoves.y = -40.f;
-                                stopMoving = true;
-                            }
-                            else if (mCollisionSide == LEFT)
-                            {
-                                mMoveMoves.x = 40.f;
-                                break;
-                            }
-                            else if (mCollisionSide == RIGHT)
-                            {
-                                mMoveMoves.x = -40.f;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
+            checkEntityCollision(entityA, colliderA, currentShape);
+        }
+    }
+
+    if (mNeedRecheck)
+    {
+        // We know it needs to move to side, but we need to double check if it actually needs to move back up
+        mCollisionBottom = false;
+        mStopMoving = false;
+        mMoveMoves.y = 0;
+
+        for (const auto& entityA : moveEntities)
+        {
+
+            const auto& colliderA = gCoordinator.GetComponent<BoxColliderComponent>(entityA);
+            const auto& transformA = gCoordinator.GetComponent<TransformComponent>(entityA);
+            BoxColliderComponent tempColliderA{ Vector2(transformA.position.x, colliderA.position.y), colliderA.w, colliderA.h };
+            // log = "tempAColl.x = " + std::to_string(tempColliderA.position.x);
+            // SDL_Log(log.c_str());
+
+
+            // bool tempCollisionLeft = mCollisionLeft;
+            // bool tempCollisionRight = mCollisionRight;
+            
+            // So we don't have repeats of special case, also mMoveMoves.x is already the correct value
+            mCollisionRight = false;
+            mCollisionLeft = false;
+
+            // This will update the mMoveMoves.y to the proper value
+            checkEntityCollision(entityA, tempColliderA, currentShape);
+
+            // CheckEntityCollision will change these values so setitng them back
+            // mCollisionLeft = tempCollisionLeft;
+            // mCollisionRight = tempCollisionRight;
         }
     }
 
@@ -58,9 +63,9 @@ void CollisionSystem::UpdateCollisions(Shape* currentShape)
     for (const auto& entity : moveEntities)
     {
         auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(entity);
+
         collider.position = collider.position + mMoveMoves;
-        
-        if (stopMoving)
+        if (mStopMoving)
         {
             gCoordinator.RemoveComponent<MoveComponent>(entity);
             gCoordinator.RemoveComponent<TetrisGravityComponent>(entity);
@@ -71,76 +76,13 @@ void CollisionSystem::UpdateCollisions(Shape* currentShape)
     // Need to increment rotation if shape rotated and no collision
     if (currentShape != nullptr)
     {
-        if (!isCollision && currentShape->isRotated)
+        if (!mIsCollision && currentShape->isRotated)
         {
             currentShape->IncrementRotation();
             currentShape->isRotated = false;
         }
     }
 }
-
-// void CollisionSystem::UpdateCollisions()
-// {
-//     bool isCollision = false;
-//     for (const auto& entityA : mEntities)
-//     {
-//         for (const auto& entityB : mEntities)
-//         {
-//             if (entityA != entityB)
-//             {
-//                 auto& colliderA = gCoordinator.GetComponent<BoxColliderComponent>(entityA);
-//                 const auto& colliderB = gCoordinator.GetComponent<BoxColliderComponent>(entityB);
-//
-//                 const auto& transformA = gCoordinator.GetComponent<TransformComponent>(entityA);
-//
-//                 // bool isMovingShape = gCoordinator.HasComponent<MoveComponent>(entityA) && gCoordinator.HasComponent<MoveComponent>(entityB);
-//                 // Current problem is that it doesn't remove all the MoveComponents I think
-//                 isCollision = checkCollision(colliderA, colliderB);
-//                 if (isCollision)
-//                 {
-//
-//                     checkCollisionSide(colliderA, colliderB);
-//                     // SDL_Log(std::to_string(colliderA.position.y).c_str());
-//                     // colliderA.isBottomCollision = isBottomColliding(colliderA, colliderB);
-//                     // colliderA.position = transformA.position;
-//                     bool notBoundaryA = !(gCoordinator.HasComponent<BoundaryComponent>(entityA));
-//                     // if (isBottomColliding(colliderA, colliderB) && notBoundaryA)
-//                     if (mCollisionSide == BOTTOM && notBoundaryA)
-//                     {
-//                         if (gCoordinator.HasComponent<MoveComponent>(entityA))
-//                         {
-//                             // mMoveSet.insert(entityA);
-//                             SDL_Log("Bottom Collision");
-//                             mRemoveMoves = true;
-//                             mMoveMoves.y = -40.f;
-//                             break;
-//                         }
-//                         // colliderA.position.y = transformA.position.y;
-//                     }
-//                     // else if ((mCollisionSide == LEFT || mCollisionSide == RIGHT)  && notBoundaryA)
-//                     // {
-//                     //     colliderA.position.x = transformA.position.x;
-//                     // }
-//                     else if (mCollisionSide == LEFT && notBoundaryA)
-//                     {
-//                         mMoveMoves.x = 40.f;
-//                         break;
-//                     }
-//                     else if (mCollisionSide == RIGHT && notBoundaryA)
-//                     {
-//                         mMoveMoves.x = -40.f;
-//                         break;
-//                     }
-//                 }
-//             }
-//         }
-//         if (mRemoveMoves || isCollision)
-//         {
-//             break;
-//         }
-//     }
-// }
-
 
 void CollisionSystem::UpdateTransforms()
 {
@@ -179,50 +121,34 @@ void CollisionSystem::UpdateMoveComponents()
     mMoveMoves = Vector2();
 }
 
-void CollisionSystem::checkCollisionSide(const BoxColliderComponent& a, const BoxColliderComponent& b)
+void CollisionSystem::checkCollisionSide(const Vector2& aCollider, const Vector2& aCurrentPos, const Vector2& bPos)
 {
-    // To help with inaccuracies
-    // float spacer = 2.f;
-
-    //Calculate the sides of rect A
-    int aMinX = a.position.x;
-    int aMaxX = a.position.x + a.w;
-    int aMinY = a.position.y;
-    int aMaxY = a.position.y + a.h;
-
-    //Calculate the sides of rect B
-    int bMinX = b.position.x;
-    int bMaxX = b.position.x + b.w;
-    int bMinY = b.position.y;
-    int bMaxY = b.position.y + b.h;
-
-    // Left Boundary
-    if (bMaxX == 760)
+    // For the boundaries
+    if (bPos.y == 940)
     {
-        mCollisionSide = LEFT;
-        return;
+        mCollisionBottom = true;
     }
-    else if (bMinX == 1160)
+    else if (bPos.x == 720)
     {
-        mCollisionSide = RIGHT;
-        return;
+        mCollisionLeft = true;
+    }
+    else if (bPos.x == 1160)
+    {
+        mCollisionRight = true;
     }
 
-    if( aMaxY >= bMinY)
+    // For all colliders
+    if (aCollider.y > aCurrentPos.y)
     {
-        mCollisionSide = BOTTOM;
+        mCollisionBottom = true;
     }
-    else if( aMinX <= bMaxX )
+    if (aCollider.x < aCurrentPos.x)
     {
-        mCollisionSide = LEFT;
+        mCollisionLeft = true;
     }
-    else if( aMaxX >= bMinX )
+    if (aCollider.x > aCurrentPos.x)
     {
-        mCollisionSide = RIGHT;
-    }
-    else if( aMinY <= bMaxY)
-    {
-        mCollisionSide = TOP;
+        mCollisionRight = true;
     }
 }
 
@@ -270,32 +196,94 @@ bool CollisionSystem::checkCollision(const BoxColliderComponent& a, const BoxCol
     return true;
 }
 
-bool CollisionSystem::isBottomColliding(const BoxColliderComponent& a, const BoxColliderComponent& b)
+// ITS GETTING BETTER, FOR NEXT ATTEMPT TRY MAKING IT CHECK ALL THE MOVE ENTITES FIRST FOR A COLLISION!!
+void CollisionSystem::checkEntityCollision(Entity entityA, const BoxColliderComponent& colliderA, Shape* currentShape)
 {
-    // To help with inaccuracies
-    // int spacer = 2.f;
-
-    //Calculate the sides of rect A
-    int aMinX = a.position.x;
-    int aMaxX = a.position.x + a.w;
-    int aMinY = a.position.y;
-    int aMaxY = a.position.y + a.h;
-
-    //Calculate the sides of rect B
-    int bMinX = b.position.x;
-    int bMaxX = b.position.x + b.w;
-    int bMinY = b.position.y;
-    int bMaxY = b.position.y + b.h;
-
-    // Check if its a side wall
-    if ((bMaxX < 760) || (bMinX > 1160))
+    for (const auto& entityB : mEntities)
     {
-        return false;
+        // if entityB does not have MoveComponent
+        if (entityA != entityB && !gCoordinator.HasComponent<MoveComponent>(entityB))
+        {
+            auto& transformA = gCoordinator.GetComponent<TransformComponent>(entityA);
+            const auto& colliderB = gCoordinator.GetComponent<BoxColliderComponent>(entityB);
+
+            if (checkCollision(colliderA, colliderB))
+            {
+                const auto& transformB = gCoordinator.GetComponent<TransformComponent>(entityB);
+                checkCollisionSide(colliderA.position, transformA.position, transformB.position);
+
+                if (currentShape->isRotated)
+                {
+                    currentShape->Undo();
+                }
+                else
+                {
+                    // If we are rechecking this we can just ignore
+                    if (mCollisionBottom && (mCollisionLeft || mCollisionRight) && !mNeedRecheck)
+                    {
+                        mNeedRecheck = true;
+                        std::string log = "aColl.x = " + std::to_string(colliderA.position.x) + ", aColl.y = " + std::to_string(colliderA.position.y) + ", aTrans.x = " + std::to_string(transformA.position.x) + ", aTrans.y = " + std::to_string(transformA.position.y) + "\n bColl.x = " + std::to_string(colliderB.position.x) + ", bColl.y = " + std::to_string(colliderB.position.y);
+                        SDL_Log(log.c_str());
+                        
+
+
+                        // BoxColliderComponent tempColliderA{ Vector2(transformA.position.x, colliderA.position.y), colliderA.w, colliderA.h };
+                        // log = "tempAColl.x = " + std::to_string(tempColliderA.position.x);
+                        // SDL_Log(log.c_str());
+                        // // Vector2 realTransformPosA = Vector2(transformA.position.x, transformA.position.y + 40.f);
+                        // // colliderA.position.x = transformA.position.x;
+                        // bool tempCollisionLeft = mCollisionLeft;
+                        // bool tempCollisionRight = mCollisionRight;
+                        // mCollisionBottom = false;
+                        // mCollisionRight = false;
+                        // mCollisionLeft = false;
+                        // First we need to check if the block didn't move to the side would there still be a bottom collision
+                        // if (checkCollision(tempColliderA, colliderB))
+                        // {
+                        //     // if there is a collision in this case, it has to a bottom collision
+                        //     SDL_Log("Special Case");
+                        //     mCollisionBottom = true;
+                        //     // checkCollisionSide(tempColliderA.position, transformA.position, transformB.position);
+                        // }
+
+                        // This checks if there is a bottom collision if the collider wasnt moved to the side at all so we can stop moving the shape
+                        // if (!checkEntityCollision(entityA, tempColliderA, currentShape))
+                        // {
+                        //     SDL_Log("Special case");
+                        //     mCollisionBottom = false;
+                        // }
+                        // else
+                        // {
+                        //     // This is just to be explicit, if it gets here there has to be a bottom collision
+                        //     mCollisionBottom = true;
+                        // }
+                        //
+                        // // CheckEntityCollision will change these values so setitng them back
+                        // mCollisionLeft = tempCollisionLeft;
+                        // mCollisionRight = tempCollisionRight;
+                    }
+
+                    if (mCollisionBottom)
+                    {
+                        SDL_Log("BOTTOM!");
+
+                        mMoveMoves.y = -40.f;
+                        mStopMoving = true;
+                    }
+                    if (mCollisionLeft)
+                    {
+                        SDL_Log("LEFT!");
+                        mMoveMoves.x = 40.f;
+                        // break;
+                    }
+                    if (mCollisionRight)
+                    {
+                        mMoveMoves.x = -40.f;
+                        // break;
+                    }
+                }
+            }
+        }
     }
-
-
-    // std::string log = "aMax: " + std::to_string(aMaxY) + " bMax: " + std::to_string(bMaxY);
-    // SDL_Log(log.c_str());
-    
-    return (aMaxY > bMinY);
 }
+

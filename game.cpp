@@ -3,7 +3,6 @@
 #include <SDL3/SDL_keycode.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL_render.h>
-#include <SDL3/SDL_surface.h>
 #include <SDL3/SDL_timer.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_mixer/SDL_mixer.h>
@@ -317,6 +316,8 @@ int main( int argc, char* args[] )
         //The quit flag
         bool quit{ false };
         bool stateChanged = false;
+        int moveCount = 0;
+        bool canMove = true;
 
         //The event data
         SDL_Event e;
@@ -385,9 +386,8 @@ int main( int argc, char* args[] )
                 physicsSystem->Update();
                 updateTimer.reset();
             }
-            // playerCollisionSystem->Update();
+
             collisionSystem->UpdateCollisions(shapeSystem->currentShape);
-            // collisionSystem->UpdateMoveComponents();
             collisionSystem->UpdateTransforms();
             renderSystem->Update();
 

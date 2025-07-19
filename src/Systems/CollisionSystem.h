@@ -18,18 +18,22 @@ public:
     void UpdateMoveComponents();
 
     bool checkCollision(const BoxColliderComponent& a, const BoxColliderComponent& b);
-    void checkCollisionSide(const BoxColliderComponent& a, const BoxColliderComponent& b);
-    bool isBottomColliding(const BoxColliderComponent& a, const BoxColliderComponent& b);
+    
+    // Made them vectors but orignally it was BoxCollider, Transform, Transform
+    void checkCollisionSide(const Vector2& aCollider, const Vector2& aCurrentPos, const Vector2& bPos);
+    // bool isBottomColliding(const BoxColliderComponent& a, const BoxColliderComponent& b);
+
+    void checkEntityCollision(Entity entityA, const BoxColliderComponent& colliderA, Shape* currentShape);
 
 private:
-    enum CollisionSide {
-        TOP,
-        RIGHT,
-        BOTTOM,
-        LEFT
-    };
 
-    enum CollisionSide mCollisionSide;
+    bool mStopMoving = false;
+    bool mIsCollision = false;
+    bool mNeedRecheck = false;
+    bool mCollisionLeft = false;
+    bool mCollisionRight = false;
+    bool mCollisionBottom = false;
+
     std::set<Entity> mMoveSet;
     Vector2 mMoveMoves = Vector2();
     bool mRemoveMoves = false;
