@@ -26,6 +26,7 @@
 #include "src/Systems/CollisionSystem.h"
 #include "src/Systems/PlayerEventSystem.h"
 #include "src/Systems/ShapeSystem.h"
+#include "src/Systems/PlayShapeSystem.h"
 
 // States
 #include "src/States/State.h"
@@ -297,8 +298,16 @@ int main( int argc, char* args[] )
     auto shapeSystem = gCoordinator.RegisterSystem<ShapeSystem>();
     {
         Signature signature;
-        signature.set(gCoordinator.GetComponentType<MoveComponent>());
+        // signature.set(gCoordinator.GetComponentType<MoveComponent>());
         gCoordinator.SetSystemSignature<ShapeSystem>(signature);
+    }
+
+    // Play Shape System
+    auto playShapeSystem = gCoordinator.RegisterSystem<PlayShapeSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<MoveComponent>());
+        gCoordinator.SetSystemSignature<PlayShapeSystem>(signature);
     }
 
     // Other systems...
@@ -356,13 +365,19 @@ int main( int argc, char* args[] )
                 prevState = gCurrentState;
             }
 
-            // This loads the new Shape
+            // This handles the next shapes and the playable shape
             if (typeid(*gCurrentState) == typeid(PlayState))
             {
                 bool isNewShape = shapeSystem->Update();
                 if (isNewShape)
                 {
                     renderSystem->LoadMedia();
+                }
+
+                // Loads the playing shape when needed
+                if (playShapeSystem->isNoPlayingShape())
+                {
+                    playShapeSystem->PlayNextShape(shapeSystem->GetNextShape());
                 }
             }
 
@@ -377,7 +392,7 @@ int main( int argc, char* args[] )
                 }
 
                 mouseButtonSystem->HandleEvent(&e);
-                playerEventSystem->HandleEvent(e, shapeSystem->currentShape);
+                playerEventSystem->HandleEvent(e, playShapeSystem->currentShape);
             }
             
             if (updateTimer.getTimeS() > deltaTime)
@@ -387,7 +402,7 @@ int main( int argc, char* args[] )
                 updateTimer.reset();
             }
 
-            collisionSystem->UpdateCollisions(shapeSystem->currentShape);
+            collisionSystem->UpdateCollisions(playShapeSystem->currentShape);
             collisionSystem->UpdateTransforms();
             renderSystem->Update();
 

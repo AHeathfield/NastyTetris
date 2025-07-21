@@ -21,20 +21,10 @@ void ReverseLShape::Init()
             });
     gCoordinator.AddComponent(
             mBlock1,
-            TetrisGravityComponent{
-                .gravity = 40.f
-            });
-    gCoordinator.AddComponent(
-            mBlock1,
             BoxColliderComponent{
                 .position = Vector2(1000.f, 140.f),
                 .w = 40,
                 .h = 40
-            });
-    gCoordinator.AddComponent(
-            mBlock1,
-            MoveComponent{
-                .distance = 40.f
             });
 
     mBlock2 = gCoordinator.CreateEntity();
@@ -54,20 +44,10 @@ void ReverseLShape::Init()
             });
     gCoordinator.AddComponent(
             mBlock2,
-            TetrisGravityComponent{
-                .gravity = 40.f
-            });
-    gCoordinator.AddComponent(
-            mBlock2,
             BoxColliderComponent{
                 .position = Vector2(960.f, 140.f),
                 .w = 40,
                 .h = 40
-            });
-    gCoordinator.AddComponent(
-            mBlock2,
-            MoveComponent{
-                .distance = 40.f
             });
 
     mBlock3 = gCoordinator.CreateEntity();
@@ -87,20 +67,10 @@ void ReverseLShape::Init()
             });
     gCoordinator.AddComponent(
             mBlock3,
-            TetrisGravityComponent{
-                .gravity = 40.f
-            });
-    gCoordinator.AddComponent(
-            mBlock3,
             BoxColliderComponent{
                 .position = Vector2(920.f, 140.f),
                 .w = 40,
                 .h = 40
-            });
-    gCoordinator.AddComponent(
-            mBlock3,
-            MoveComponent{
-                .distance = 40.f
             });
 
     mBlock4 = gCoordinator.CreateEntity();
@@ -120,20 +90,10 @@ void ReverseLShape::Init()
             });
     gCoordinator.AddComponent(
             mBlock4,
-            TetrisGravityComponent{
-                .gravity = 40.f
-            });
-    gCoordinator.AddComponent(
-            mBlock4,
             BoxColliderComponent{
                 .position = Vector2(1000.f, 180.f),
                 .w = 40,
                 .h = 40
-            });
-    gCoordinator.AddComponent(
-            mBlock4,
-            MoveComponent{
-                .distance = 40.f
             });
 
 
