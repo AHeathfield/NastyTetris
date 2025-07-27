@@ -40,6 +40,8 @@ void PlayShapeSystem::PlayNextShape(Shape* nextShape)
 {
     nextShape->MakeMovable();
     currentShape = nextShape;
+
+    // Used for making sure a shape can only be held once
     canHoldShape = true;
 
     // Used to help update the shape pos
@@ -62,12 +64,12 @@ void PlayShapeSystem::UpdateRefEntity()
     const auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(mRefEntity);
     mRefEntityPosDiff = collider.position - currentShape->mShapePos;
 
-    std::string log = "Collider: " + collider.position.PrintPosition();
-    SDL_Log(log.c_str());
-    log = "Current Shape Pos: " + currentShape->mShapePos.PrintPosition();
-    SDL_Log(log.c_str());
-    log = "Ref Entity Pos Diff: " + mRefEntityPosDiff.PrintPosition();
-    SDL_Log(log.c_str());
+    // std::string log = "Collider: " + collider.position.PrintPosition();
+    // SDL_Log(log.c_str());
+    // log = "Current Shape Pos: " + currentShape->mShapePos.PrintPosition();
+    // SDL_Log(log.c_str());
+    // log = "Ref Entity Pos Diff: " + mRefEntityPosDiff.PrintPosition();
+    // SDL_Log(log.c_str());
 }
 
 bool PlayShapeSystem::isNoPlayingShape()
