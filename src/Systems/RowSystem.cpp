@@ -6,6 +6,15 @@
 
 extern Coordinator gCoordinator;
 
+// Helper method
+void deleteRow(const std::vector<Entity>& row)
+{
+    for (const auto& entity : row)
+    {
+        gCoordinator.DestroyEntity(entity);
+    }
+}
+
 void RowSystem::Update()
 {
     const int rowLength = 10;
@@ -28,14 +37,20 @@ void RowSystem::Update()
         }
     }
 
-    // Traversing the grid
-    for (auto row = grid.begin(); row != grid.end(); row++)
+    // Deleting Rows
+    int rowsRemoved = 0;
+
+    std::unordered_map<float, std::vector<Entity>> gridCopy = grid;
+    for (auto row = gridCopy.begin(); row != gridCopy.end(); row++)
     {
         if (row->second.size() == rowLength)
         {
             // Delete row
             std::string log = "Delete row: " + std::to_string(row->first);
             SDL_Log(log.c_str());
+            deleteRow(row->second);
+            grid.erase(row->first);
+            rowsRemoved++;
         }
         else
         {
@@ -43,4 +58,19 @@ void RowSystem::Update()
             row->second.clear();
         }
     }
+
+    // Moving all down if row was deleted
+    const float blockHeight = 40.f;
+    for (auto row = grid.begin(); row != grid.end(); row++)
+    {
+        for (const auto& block : row->second)
+        {
+            auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(block);
+            auto& transform = gCoordinator.GetComponent<TransformComponent>(block);
+
+            collider.position.y += blockHeight * rowsRemoved;
+            transform.position.y += blockHeight * rowsRemoved;
+        }
+    }
 }
+
