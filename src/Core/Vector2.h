@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <string>
 
 class Vector2
 {
@@ -56,6 +57,11 @@ public:
         return std::sqrtf(x*x + y*y);
     }
 
+    bool equals(const Vector2& other) const
+    {
+        return (x == other.x && y == other.y);
+    }
+
     void normalize()
     {
         float magnitude = getMagnitude();
@@ -69,5 +75,11 @@ public:
     float getAngleRadians() const
     {
         return std::atanf(y/x);
+    }
+
+    std::string PrintPosition() const
+    {
+        std::string pos = "X = " + std::to_string(x) + ", Y = " + std::to_string(y);
+        return pos;
     }
 };

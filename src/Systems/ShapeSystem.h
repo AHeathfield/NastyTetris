@@ -25,20 +25,14 @@ private:
 
     void InitShapes()
     {
-        for (const auto& shape : mHoldingShapes)
-        {
-            if (!shape->isAlreadyInit)
-            {
-                shape->Init();
-            }
-        }
-
         // index 0 is the bottom of the next list, 2 is the top
         for (int i = 0; i < 3; i++)
         {
             if (!mHoldingShapes[i]->isAlreadyInit)
             {
-                mHoldingShapes[i]->Move(480.f, (320.f - (i * 120.f)));
+                mHoldingShapes[i]->mShapePos = Vector2(1360.f, 460.f - (i * 120.f));
+                mHoldingShapes[i]->Init();
+                // mHoldingShapes[i]->Move(480.f, (320.f - (i * 120.f)));
                 mHoldingShapes[i]->isAlreadyInit = true;
             }
             else
@@ -51,7 +45,7 @@ private:
 
     void Rearrange()
     {
-         Shape* temp = mHoldingShapes[2];
+        Shape* temp = mHoldingShapes[2];
 
         mHoldingShapes[2] = mHoldingShapes[1];
         mHoldingShapes[1] = mHoldingShapes[0];

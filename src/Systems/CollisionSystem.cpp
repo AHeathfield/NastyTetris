@@ -200,6 +200,7 @@ void CollisionSystem::checkEntityCollision(Entity entityA, const BoxColliderComp
 
             if (checkCollision(colliderA, colliderB))
             {
+                // SDL_Log("COLLISION");
                 const auto& transformB = gCoordinator.GetComponent<TransformComponent>(entityB);
                 checkCollisionSide(colliderA.position, transformA.position, transformB.position);
 

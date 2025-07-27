@@ -19,6 +19,7 @@
 #include "src/Components/TetrisGravityComponent.h"
 #include "src/Components/MoveComponent.h"
 #include "src/Components/BoundaryComponent.h"
+#include "src/Components/HoldComponent.h"
 
 #include "src/Systems/RenderSystem.h"
 #include "src/Systems/MouseButtonSystem.h"
@@ -27,6 +28,7 @@
 #include "src/Systems/PlayerEventSystem.h"
 #include "src/Systems/ShapeSystem.h"
 #include "src/Systems/PlayShapeSystem.h"
+#include "src/Systems/HoldSystem.h"
 
 // States
 #include "src/States/State.h"
@@ -243,6 +245,7 @@ int main( int argc, char* args[] )
     gCoordinator.RegisterComponent<BoxColliderComponent>();
     gCoordinator.RegisterComponent<MoveComponent>();
     gCoordinator.RegisterComponent<BoundaryComponent>();
+    gCoordinator.RegisterComponent<HoldComponent>();
     gCoordinator.RegisterComponent<ButtonComponent*>();
 
     // Registering Systems
@@ -308,6 +311,14 @@ int main( int argc, char* args[] )
         Signature signature;
         signature.set(gCoordinator.GetComponentType<MoveComponent>());
         gCoordinator.SetSystemSignature<PlayShapeSystem>(signature);
+    }
+
+    // Play Shape System
+    auto holdSystem = gCoordinator.RegisterSystem<HoldSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<HoldComponent>());
+        gCoordinator.SetSystemSignature<HoldSystem>(signature);
     }
 
     // Other systems...
@@ -378,6 +389,7 @@ int main( int argc, char* args[] )
                 if (playShapeSystem->isNoPlayingShape())
                 {
                     playShapeSystem->PlayNextShape(shapeSystem->GetNextShape());
+                    playShapeSystem->UpdateRefEntity();
                 }
             }
 
@@ -392,7 +404,7 @@ int main( int argc, char* args[] )
                 }
 
                 mouseButtonSystem->HandleEvent(&e);
-                playerEventSystem->HandleEvent(e, playShapeSystem->currentShape);
+                playerEventSystem->HandleEvent(e);
             }
             
             if (updateTimer.getTimeS() > deltaTime)
@@ -402,8 +414,12 @@ int main( int argc, char* args[] )
                 updateTimer.reset();
             }
 
+            // holdSystem->Update();
             collisionSystem->UpdateCollisions(playShapeSystem->currentShape);
             collisionSystem->UpdateTransforms();
+            holdSystem->Update();
+            playShapeSystem->Update();
+            // holdSystem->Update();
             renderSystem->Update();
 
             // If time remaining in frame

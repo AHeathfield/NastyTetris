@@ -407,6 +407,17 @@ public:
     }
 
     template<typename T>
+    std::shared_ptr<T> GetSystem()
+    {
+        const char* typeName = typeid(T).name();
+        auto system = mSystems.find(typeName);
+
+        assert(system != mSystems.end() && "System does not exist");
+
+        return std::static_pointer_cast<T>(system->second);
+    }
+
+    template<typename T>
     void SetSignature(Signature signature)
     {
         const char* typeName = typeid(T).name();
@@ -547,6 +558,12 @@ public:
     std::shared_ptr<T> RegisterSystem()
     {
         return mSystemManager->RegisterSystem<T>();
+    }
+
+    template<typename T>
+    std::shared_ptr<T> GetSystem()
+    {
+        return mSystemManager->GetSystem<T>();
     }
 
     template<typename T>

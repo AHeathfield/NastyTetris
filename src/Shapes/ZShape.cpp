@@ -15,14 +15,14 @@ void ZShape::Init()
     gCoordinator.AddComponent(
             mBlock1,
             TransformComponent{
-                .position = Vector2(920.f, 140.f),
+                .position = mShapePos + Vector2(0.f, 0.f),
                 .rotation = Vector2(),
                 .scale = Vector2()
             });
     gCoordinator.AddComponent(
             mBlock1,
             BoxColliderComponent{
-                .position = Vector2(920.f, 140.f),
+                .position = mShapePos + Vector2(0.f, 0.f),
                 .w = 40,
                 .h = 40
             });
@@ -38,14 +38,14 @@ void ZShape::Init()
     gCoordinator.AddComponent(
             mBlock2,
             TransformComponent{
-                .position = Vector2(960.f, 140.f),
+                .position = mShapePos + Vector2(40.f, 0.f),
                 .rotation = Vector2(),
                 .scale = Vector2()
             });
     gCoordinator.AddComponent(
             mBlock2,
             BoxColliderComponent{
-                .position = Vector2(960.f, 140.f),
+                .position = mShapePos + Vector2(40.f, 0.f),
                 .w = 40,
                 .h = 40
             });
@@ -61,14 +61,14 @@ void ZShape::Init()
     gCoordinator.AddComponent(
             mBlock3,
             TransformComponent{
-                .position = Vector2(960.f, 180.f),
+                .position = mShapePos + Vector2(40.f, 40.f),
                 .rotation = Vector2(),
                 .scale = Vector2()
             });
     gCoordinator.AddComponent(
             mBlock3,
             BoxColliderComponent{
-                .position = Vector2(960.f, 180.f),
+                .position = mShapePos + Vector2(40.f, 40.f),
                 .w = 40,
                 .h = 40
             });
@@ -84,19 +84,17 @@ void ZShape::Init()
     gCoordinator.AddComponent(
             mBlock4,
             TransformComponent{
-                .position = Vector2(1000.f, 180.f),
+                .position = mShapePos + Vector2(80.f, 40.f),
                 .rotation = Vector2(),
                 .scale = Vector2()
             });
     gCoordinator.AddComponent(
             mBlock4,
             BoxColliderComponent{
-                .position = Vector2(1000.f, 180.f),
+                .position = mShapePos + Vector2(80.f, 40.f),
                 .w = 40,
                 .h = 40
             });
-
-
 }
 
 

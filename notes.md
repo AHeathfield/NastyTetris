@@ -25,8 +25,6 @@
 - 20 blocks tall, 10 wide
 
 
-
-
-
-# NEXT TIME
-- limit how fast the hold down key is
+- The swap feature:
+    - click c to place block in hold, then spawn new block (cannot swap again until new block is placed)
+    - if block in hold you can click c to place current block in hold at top of screen and the current playing block in hold

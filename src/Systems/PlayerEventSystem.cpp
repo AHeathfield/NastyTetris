@@ -1,19 +1,43 @@
 #include "PlayerEventSystem.h"
+#include <SDL3/SDL_keycode.h>
 
 extern Coordinator gCoordinator;
 
-void PlayerEventSystem::HandleEvent(SDL_Event e, Shape* currentShape)
+void PlayerEventSystem::HandleEvent(SDL_Event e)
 {
+    auto playShapeSystem = gCoordinator.GetSystem<PlayShapeSystem>();
     if (e.type == SDL_EVENT_KEY_DOWN)
     {
-        if (e.key.key == SDLK_UP && currentShape != nullptr)
+        if (e.key.key == SDLK_UP && playShapeSystem->currentShape != nullptr)
         {
-            currentShape->Rotate();
-            currentShape->isRotated = true;
+            playShapeSystem->currentShape->Rotate();
+            playShapeSystem->currentShape->isRotated = true;
         }
 
         else
         {
+            if (e.key.key == SDLK_SPACE)
+            {
+                // Unrotates the shape
+                while (playShapeSystem->currentShape->mCurrentRotationDegrees != 0)
+                {
+                    playShapeSystem->currentShape->Rotate();
+                    playShapeSystem->currentShape->IncrementRotation();
+                }
+
+                // Adding HoldComponent to the shape if it doesn't have it already
+
+                auto holdSystem = gCoordinator.GetSystem<HoldSystem>();
+
+                Shape* temp = nullptr;
+                if (holdSystem->currentShape != nullptr)
+                {
+                    holdSystem->canRelease = true;
+                }
+                holdSystem->canHold = true;
+                holdSystem->HoldShape(playShapeSystem->currentShape);
+            }
+
             for (const auto& entity : mEntities)
             {
                 // TODO: Use command pattern!
