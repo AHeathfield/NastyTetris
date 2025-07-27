@@ -20,6 +20,7 @@
 #include "src/Components/MoveComponent.h"
 #include "src/Components/BoundaryComponent.h"
 #include "src/Components/HoldComponent.h"
+#include "src/Components/RowComponent.h"
 
 #include "src/Systems/RenderSystem.h"
 #include "src/Systems/MouseButtonSystem.h"
@@ -29,6 +30,7 @@
 #include "src/Systems/ShapeSystem.h"
 #include "src/Systems/PlayShapeSystem.h"
 #include "src/Systems/HoldSystem.h"
+#include "src/Systems/RowSystem.h"
 
 // States
 #include "src/States/State.h"
@@ -246,6 +248,7 @@ int main( int argc, char* args[] )
     gCoordinator.RegisterComponent<MoveComponent>();
     gCoordinator.RegisterComponent<BoundaryComponent>();
     gCoordinator.RegisterComponent<HoldComponent>();
+    gCoordinator.RegisterComponent<RowComponent>();
     gCoordinator.RegisterComponent<ButtonComponent*>();
 
     // Registering Systems
@@ -313,7 +316,7 @@ int main( int argc, char* args[] )
         gCoordinator.SetSystemSignature<PlayShapeSystem>(signature);
     }
 
-    // Play Shape System
+    // Hold System
     auto holdSystem = gCoordinator.RegisterSystem<HoldSystem>();
     {
         Signature signature;
@@ -321,6 +324,15 @@ int main( int argc, char* args[] )
         gCoordinator.SetSystemSignature<HoldSystem>(signature);
     }
 
+    // Row System
+    auto rowSystem = gCoordinator.RegisterSystem<RowSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<RowComponent>());
+        signature.set(gCoordinator.GetComponentType<TransformComponent>());
+        signature.set(gCoordinator.GetComponentType<TextureComponent>());
+        gCoordinator.SetSystemSignature<RowSystem>(signature);
+    }
     // Other systems...
 
 
@@ -419,7 +431,7 @@ int main( int argc, char* args[] )
             collisionSystem->UpdateTransforms();
             holdSystem->Update();
             playShapeSystem->Update();
-            // holdSystem->Update();
+            rowSystem->Update();
             renderSystem->Update();
 
             // If time remaining in frame

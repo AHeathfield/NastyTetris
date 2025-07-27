@@ -6,6 +6,7 @@
 #include "../Components/MoveComponent.h"
 #include "../Components/BoundaryComponent.h"
 #include "../Components/TetrisGravityComponent.h"
+#include "../Components/RowComponent.h"
 #include "../Shapes/Shape.h"
 #include <set>
 

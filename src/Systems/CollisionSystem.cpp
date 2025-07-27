@@ -60,6 +60,9 @@ void CollisionSystem::UpdateCollisions(Shape* currentShape)
         {
             gCoordinator.RemoveComponent<MoveComponent>(entity);
             gCoordinator.RemoveComponent<TetrisGravityComponent>(entity);
+
+            // Used to check if a line is created
+            gCoordinator.AddComponent(entity, RowComponent{});
         }
     }
     mMoveMoves = Vector2();
