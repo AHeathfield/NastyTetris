@@ -58,20 +58,6 @@ void HoldSystem::HoldShape(Shape* newShape)
     oldShape = currentShape;
     SDL_Log("Holding");
     currentShape = newShape;
-
-    // Adding the hold component to the shape
-    // for (const auto& entity : currentShape->GetEntities())
-    // {
-    //     if (!gCoordinator.HasComponent<HoldComponent>(entity))
-    //     {
-    //         gCoordinator.AddComponent(
-    //                 entity,
-    //                 HoldComponent{
-    //             });
-    //     }
-    // }
-
-    // canRelease = false;
 }
 
 // Shape* HoldSystem::ReleaseShape()

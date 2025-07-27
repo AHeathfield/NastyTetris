@@ -18,11 +18,19 @@ void PlayerEventSystem::HandleEvent(SDL_Event e)
         {
             if (e.key.key == SDLK_SPACE)
             {
+                bool rotated = false;
                 // Unrotates the shape
                 while (playShapeSystem->currentShape->mCurrentRotationDegrees != 0)
                 {
+                    rotated = true;
                     playShapeSystem->currentShape->Rotate();
                     playShapeSystem->currentShape->IncrementRotation();
+                }
+
+                // Updating the shapePos after rotating
+                if (rotated)
+                {
+                    playShapeSystem->Update();
                 }
 
                 // Adding HoldComponent to the shape if it doesn't have it already
