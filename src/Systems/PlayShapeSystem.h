@@ -19,4 +19,5 @@ public:
     Shape* currentShape = nullptr;
     Entity mRefEntity;
     Vector2 mRefEntityPosDiff;
+    bool canHoldShape = false;
 };

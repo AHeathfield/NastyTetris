@@ -40,6 +40,7 @@ void PlayShapeSystem::PlayNextShape(Shape* nextShape)
 {
     nextShape->MakeMovable();
     currentShape = nextShape;
+    canHoldShape = true;
 
     // Used to help update the shape pos
     // mRefEntity = currentShape->GetEntities()[0];

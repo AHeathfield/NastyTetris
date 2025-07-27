@@ -8,7 +8,8 @@ void HoldSystem::Update()
     auto playShapeSystem = gCoordinator.GetSystem<PlayShapeSystem>();
     Vector2 holdPos = Vector2(400.f, 260.f);
 
-    if (currentShape != nullptr)
+    // canHoldShape makes sure the shape is only held once
+    if (currentShape != nullptr && playShapeSystem->canHoldShape)
     {
         if (canHold)//mEntities.empty()) //&& !holdPos.equals(currentShape->mShapePos))
         {
@@ -45,6 +46,9 @@ void HoldSystem::Update()
             playShapeSystem->currentShape->SetPosition(playPos);
             oldShape = nullptr;
             canRelease = false;
+
+            // This is so you can only swap shapes 1 time per shape
+            playShapeSystem->canHoldShape = false;
         }
 
         

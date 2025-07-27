@@ -16,7 +16,7 @@ void PlayerEventSystem::HandleEvent(SDL_Event e)
 
         else
         {
-            if (e.key.key == SDLK_SPACE)
+            if (e.key.key == SDLK_SPACE && playShapeSystem->canHoldShape)
             {
                 bool rotated = false;
                 // Unrotates the shape
