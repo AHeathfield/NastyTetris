@@ -176,48 +176,6 @@ void close()
     SDL_Quit();
 }
 
-bool checkCollision( SDL_Rect a, SDL_Rect b )
-{
-    //Calculate the sides of rect A
-    int aMinX{ a.x };
-    int aMaxX{ a.x + a.w };
-    int aMinY{ a.y };
-    int aMaxY{ a.y + a.h };
-
-    //Calculate the sides of rect B
-    int bMinX{ b.x };
-    int bMaxX{ b.x + b.w };
-    int bMinY{ b.y };
-    int bMaxY{ b.y + b.h };
-
-    //If left side of A is the the right of B
-    if( aMinX >= bMaxX )
-    {
-        return false;
-    }
-
-    //If the right side of A to the left of B
-    if( aMaxX <= bMinX )
-    {
-        return false;
-    }
-
-    //If the top side of A is below B
-    if( aMinY >= bMaxY )
-    {
-        return false;
-    }
-
-    //If the bottom side of A is above B
-    if( aMaxY <= bMinY )
-    {
-        return false;
-    }
-
-    //If none of the sides from A are outside B
-    return true;
-}
-
 
 int main( int argc, char* args[] )
 {
@@ -389,21 +347,21 @@ int main( int argc, char* args[] )
             }
 
             // This handles the next shapes and the playable shape
-            if (typeid(*gCurrentState) == typeid(PlayState))
-            {
-                bool isNewShape = shapeSystem->Update();
-                if (isNewShape)
-                {
-                    renderSystem->LoadMedia();
-                }
-
-                // Loads the playing shape when needed
-                if (playShapeSystem->isNoPlayingShape())
-                {
-                    playShapeSystem->PlayNextShape(shapeSystem->GetNextShape());
-                    playShapeSystem->UpdateRefEntity();
-                }
-            }
+            // if (typeid(*gCurrentState) == typeid(PlayState))
+            // {
+            //     bool isNewShape = shapeSystem->Update();
+            //     if (isNewShape)
+            //     {
+            //         renderSystem->LoadMedia();
+            //     }
+            //
+            //     // Loads the playing shape when needed
+            //     if (playShapeSystem->isNoPlayingShape())
+            //     {
+            //         playShapeSystem->PlayNextShape(shapeSystem->GetNextShape());
+            //         playShapeSystem->UpdateRefEntity();
+            //     }
+            // }
 
             //Get event data
             while( SDL_PollEvent( &e ) == true )
@@ -419,10 +377,31 @@ int main( int argc, char* args[] )
                 playerEventSystem->HandleEvent(e);
             }
             
+
             if (updateTimer.getTimeS() > deltaTime)
             {
+                // This handles the next shapes and the playable shape
+                if (typeid(*gCurrentState) == typeid(PlayState))
+                {
+                    bool isNewShape = shapeSystem->Update();
+                    if (isNewShape)
+                    {
+                        renderSystem->LoadMedia();
+                    }
+
+                    // Loads the playing shape when needed
+                    if (playShapeSystem->isNoPlayingShape())
+                    {
+                        playShapeSystem->PlayNextShape(shapeSystem->GetNextShape());
+                        playShapeSystem->UpdateRefEntity();
+                    }
+                }
+
                 // Physics will move the colliders, collision will check if there are collisions if so move back to where they were, render draws everything
                 physicsSystem->Update();
+
+                rowSystem->Update();
+
                 updateTimer.reset();
             }
 
@@ -431,7 +410,7 @@ int main( int argc, char* args[] )
             collisionSystem->UpdateTransforms();
             holdSystem->Update();
             playShapeSystem->Update();
-            rowSystem->Update();
+            // rowSystem->Update();
             renderSystem->Update();
 
             // If time remaining in frame

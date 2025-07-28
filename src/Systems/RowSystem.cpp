@@ -7,8 +7,30 @@
 extern Coordinator gCoordinator;
 
 // Helper method
+// THIS SHOULD BE ALIGNED WITH THE AMOUNT OF TIME IT TAKES TO FALL
+// Think about removing the RowCOmponent
 void deleteRow(const std::vector<Entity>& row)
 {
+    // auto renderSystem = gCoordinator.GetSystem<RenderSystem>();
+    // // Chaning it to white sprite when its a row
+    // for (const auto& entity : row)
+    // {
+    //     auto& texture = gCoordinator.GetComponent<TextureComponent>(entity);
+    //     texture.spriteClip.x = 120.f;
+    //     texture.spriteClip.y = 40.f;
+    // }
+    //
+    // renderSystem->Update();
+    // Timer animationTimer = Timer();
+    // float animationTime = 1.f;
+    // animationTimer.start();
+    //
+    // // This is like purposely creating a lagspike, which is actually how its like in the real tetris
+    // while (animationTimer.getTimeS() < animationTime)
+    // {
+    //     SDL_Log("Waiting");
+    // }
+
     for (const auto& entity : row)
     {
         gCoordinator.DestroyEntity(entity);

@@ -4,6 +4,8 @@
 #include "../Components/TextureComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/BoxColliderComponent.h"
+#include "RenderSystem.h"
+#include "../Core/Timer.h"
 
 class RowSystem : public System
 {
