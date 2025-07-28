@@ -67,18 +67,35 @@ bool RenderSystem::LoadMedia()
     // std::string log = std::to_string(mEntities.size());
     // const char* logc = log.c_str();
     // SDL_Log(logc);
+    bool success = true;
     for (const auto& entity : mEntities)
     {
         auto& textureComponent = gCoordinator.GetComponent<TextureComponent>(entity);
 
         // Loading Textures
-        if (loadTexture(&textureComponent) == false)
+        // Text
+        if (textureComponent.isText)
+        {
+            // Loading the font
+            if (textureComponent.loadFont() == false)
+            {
+                SDL_Log( "Could not load %s! SDL_ttf Error: %s\n", textureComponent.path.c_str(), SDL_GetError() );
+                success = false;
+            }
+            if (loadFromRenderedText(&textureComponent) == false)
+            {
+                SDL_Log("Unable to load text texture.\n");
+                success = false;
+            }
+        }
+        // Image
+        else if (loadTexture(&textureComponent) == false)
         {
             SDL_Log("Unable to load a texture (put better error msg here lol).\n");
-            return false;
+            success = false;
         }
     }
-    return true;
+    return success;
 }
 
 
@@ -111,6 +128,9 @@ void RenderSystem::Close()
     {
         auto& textureComponent = gCoordinator.GetComponent<TextureComponent>(entity);
         textureComponent.destroy();
+
+        // If it has a font it will destroy it
+        textureComponent.destroyFont();
     }
 
     // Destroys window
@@ -151,12 +171,42 @@ bool RenderSystem::loadTexture(TextureComponent* textureComponent)
                 //Get image dimensions
                 textureComponent->width = loadedSurface->w;
                 textureComponent->height = loadedSurface->h;
-
             }
         }
         
         //Clean up loaded surface
         SDL_DestroySurface( loadedSurface );
+    }
+
+    //Return success if texture loaded
+    return textureComponent->texture != nullptr;
+}
+
+bool RenderSystem::loadFromRenderedText(TextureComponent* textureComponent)
+{
+    //Clean up existing texture
+    textureComponent->destroy();
+
+    //Load text surface
+    if( SDL_Surface* textSurface = TTF_RenderText_Blended( textureComponent->font, textureComponent->text.c_str(), 0, textureComponent->textColor ); textSurface == nullptr )
+    {
+        SDL_Log( "Unable to render text surface! SDL_ttf Error: %s\n", SDL_GetError() );
+    }
+    else
+    {
+        //Create texture from surface
+        if( textureComponent->texture = SDL_CreateTextureFromSurface( mRenderer, textSurface ); textureComponent->texture == nullptr )
+        {
+            SDL_Log( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
+        }
+        else
+        {
+            textureComponent->width = textSurface->w;
+            textureComponent->height = textSurface->h;
+        }
+
+        //Free temp surface
+        SDL_DestroySurface( textSurface );
     }
 
     //Return success if texture loaded

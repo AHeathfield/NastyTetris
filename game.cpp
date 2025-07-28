@@ -167,8 +167,8 @@ void close()
     gAudioDeviceId = 0;
 
     //Free font
-    TTF_CloseFont( gFont );
-    gFont = nullptr;
+    // TTF_CloseFont( gFont );
+    // gFont = nullptr;
 
     //Quit SDL subsystems
     Mix_Quit();

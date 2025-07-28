@@ -27,6 +27,7 @@ public:
     // We use TextureComponent& when we just want handle the object normally but its really big, we use TextureComponent* when we actually want to change the value of the object being passed in
     bool loadTexture(TextureComponent* textureComponent);
 
+    bool loadFromRenderedText(TextureComponent* textureComponent);
 
 private:
     SDL_Renderer* mRenderer = nullptr;
