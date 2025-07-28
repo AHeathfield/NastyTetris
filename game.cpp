@@ -400,17 +400,17 @@ int main( int argc, char* args[] )
                 // Physics will move the colliders, collision will check if there are collisions if so move back to where they were, render draws everything
                 physicsSystem->Update();
 
-                rowSystem->Update();
+                // Deletes the rows that are completed
+                rowSystem->DeleteRows();
 
                 updateTimer.reset();
             }
 
-            // holdSystem->Update();
             collisionSystem->UpdateCollisions(playShapeSystem->currentShape);
             collisionSystem->UpdateTransforms();
             holdSystem->Update();
             playShapeSystem->Update();
-            // rowSystem->Update();
+            rowSystem->Update();
             renderSystem->Update();
 
             // If time remaining in frame
