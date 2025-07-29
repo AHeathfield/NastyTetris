@@ -32,6 +32,7 @@ add_executable(game WIN32 game.cpp
     src/Systems/PlayShapeSystem.cpp
     src/Systems/HoldSystem.cpp
     src/Systems/RowSystem.cpp
+    src/Systems/ScoreSystem.cpp
     src/States/TitleState.cpp
     src/States/PlayState.cpp
     src/Components/Buttons/StateChangerButton.cpp

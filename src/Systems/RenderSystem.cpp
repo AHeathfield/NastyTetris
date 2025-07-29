@@ -61,41 +61,78 @@ void RenderSystem::Update()
     // TODO: Do the framerate stuff
 }
 
-bool RenderSystem::LoadMedia()
+bool RenderSystem::LoadAllMedia()
 {
     // Initializing Textures
     // std::string log = std::to_string(mEntities.size());
     // const char* logc = log.c_str();
     // SDL_Log(logc);
-    bool success = true;
+    // bool success = true;
     for (const auto& entity : mEntities)
     {
         auto& textureComponent = gCoordinator.GetComponent<TextureComponent>(entity);
 
+        if (LoadMedia(&textureComponent) == false)
+        {
+            return false;
+        }
+
         // Loading Textures
         // Text
-        if (textureComponent.isText)
+        // if (textureComponent.isText)
+        // {
+        //     // Loading the font
+        //     if (textureComponent.loadFont() == false)
+        //     {
+        //         SDL_Log( "Could not load %s! SDL_ttf Error: %s\n", textureComponent.path.c_str(), SDL_GetError() );
+        //         return false;
+        //     }
+        //     if (loadFromRenderedText(&textureComponent) == false)
+        //     {
+        //         SDL_Log("Unable to load text texture.\n");
+        //         return false;
+        //     }
+        // }
+        // // Image
+        // else if (loadTexture(&textureComponent) == false)
+        // {
+        //     SDL_Log("Unable to load a texture (put better error msg here lol).\n");
+        //     return false;
+        // }
+    }
+    return true;
+}
+
+
+bool RenderSystem::LoadMedia(TextureComponent* textureComponent)
+{
+    if (textureComponent->isText)
+    {
+        // Loading the font
+        if (textureComponent->font == nullptr)
         {
-            // Loading the font
-            if (textureComponent.loadFont() == false)
+            if (textureComponent->loadFont() == false)
             {
-                SDL_Log( "Could not load %s! SDL_ttf Error: %s\n", textureComponent.path.c_str(), SDL_GetError() );
-                success = false;
-            }
-            if (loadFromRenderedText(&textureComponent) == false)
-            {
-                SDL_Log("Unable to load text texture.\n");
-                success = false;
+                SDL_Log( "Could not load %s! SDL_ttf Error: %s\n", textureComponent->path.c_str(), SDL_GetError() );
+                return false;
             }
         }
-        // Image
-        else if (loadTexture(&textureComponent) == false)
+        
+        // loading text
+        if (loadFromRenderedText(textureComponent) == false)
         {
-            SDL_Log("Unable to load a texture (put better error msg here lol).\n");
-            success = false;
+            SDL_Log("Unable to load text texture.\n");
+            return false;
         }
     }
-    return success;
+    // Image
+    else if (loadTexture(textureComponent) == false)
+    {
+        SDL_Log("Unable to load a texture (put better error msg here lol).\n");
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -186,6 +223,8 @@ bool RenderSystem::loadFromRenderedText(TextureComponent* textureComponent)
 {
     //Clean up existing texture
     textureComponent->destroy();
+
+    // SDL_Log(textureComponent->text.c_str());
 
     //Load text surface
     if( SDL_Surface* textSurface = TTF_RenderText_Blended( textureComponent->font, textureComponent->text.c_str(), 0, textureComponent->textColor ); textSurface == nullptr )

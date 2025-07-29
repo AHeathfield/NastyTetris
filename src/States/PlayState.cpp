@@ -77,21 +77,26 @@ void PlayState::Enter()
                 .position = Vector2(720.f, 100.f),
             });
 
+    // Initializing Score
+    auto scoreSystem = gCoordinator.GetSystem<ScoreSystem>();
+    scoreSystem->Init();
+
     // Test Text
-    Entity testText = gCoordinator.CreateEntity();
-    gCoordinator.AddComponent(
-            testText,
-            TextureComponent{
-                .texture = nullptr,
-                .path = "src/Assets/8bit16.ttf",
-                .isText = true,
-                .text = "0"
-            });
-    gCoordinator.AddComponent(
-            testText, 
-            TransformComponent{
-                .position = Vector2(360.f, 600.f)
-            });
+    // Entity testText = gCoordinator.CreateEntity();
+    // gCoordinator.AddComponent(
+    //         testText,
+    //         TextureComponent{
+    //             .texture = nullptr,
+    //             .path = "src/Assets/8bit16.ttf",
+    //             .isText = true,
+    //             .fontSize = 40,
+    //             .text = "00000000",
+    //         });
+    // gCoordinator.AddComponent(
+    //         testText, 
+    //         TransformComponent{
+    //             .position = Vector2(360.f, 600.f)
+    //         });
 }
 
 void PlayState::Exit()

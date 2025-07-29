@@ -6,6 +6,7 @@
 #include "../Components/BoxColliderComponent.h"
 #include "../Components/RowComponent.h"
 #include "RenderSystem.h"
+#include "ScoreSystem.h"
 #include "../Core/Timer.h"
 
 class RowSystem : public System

@@ -7,6 +7,7 @@
 #include "../Components/BoxColliderComponent.h"
 // #include "../Components/MoveComponent.h"
 #include "../Components/BoundaryComponent.h"
+#include "../Systems/ScoreSystem.h"
 // #include "../Shapes/Shape.h"
 // #include "../Shapes/LShape.h"
 

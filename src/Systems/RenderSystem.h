@@ -11,8 +11,9 @@ public:
     // initializes window
     bool Init();
 
-    // loads media
-    bool LoadMedia();
+    bool LoadAllMedia();
+
+    bool LoadMedia(TextureComponent* textureComponent);
 
     // Things that happen every frame
     void Update();

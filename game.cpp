@@ -21,6 +21,7 @@
 #include "src/Components/BoundaryComponent.h"
 #include "src/Components/HoldComponent.h"
 #include "src/Components/RowComponent.h"
+#include "src/Components/ScoreComponent.h"
 
 #include "src/Systems/RenderSystem.h"
 #include "src/Systems/MouseButtonSystem.h"
@@ -31,6 +32,7 @@
 #include "src/Systems/PlayShapeSystem.h"
 #include "src/Systems/HoldSystem.h"
 #include "src/Systems/RowSystem.h"
+#include "src/Systems/ScoreSystem.h"
 
 // States
 #include "src/States/State.h"
@@ -207,6 +209,7 @@ int main( int argc, char* args[] )
     gCoordinator.RegisterComponent<BoundaryComponent>();
     gCoordinator.RegisterComponent<HoldComponent>();
     gCoordinator.RegisterComponent<RowComponent>();
+    gCoordinator.RegisterComponent<ScoreComponent>();
     gCoordinator.RegisterComponent<ButtonComponent*>();
 
     // Registering Systems
@@ -291,6 +294,17 @@ int main( int argc, char* args[] )
         signature.set(gCoordinator.GetComponentType<TextureComponent>());
         gCoordinator.SetSystemSignature<RowSystem>(signature);
     }
+
+    // Score System
+    auto scoreSystem = gCoordinator.RegisterSystem<ScoreSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<ScoreComponent>());
+        signature.set(gCoordinator.GetComponentType<TransformComponent>());
+        signature.set(gCoordinator.GetComponentType<TextureComponent>());
+        gCoordinator.SetSystemSignature<ScoreSystem>(signature);
+    }
+
     // Other systems...
 
 
@@ -319,7 +333,7 @@ int main( int argc, char* args[] )
         gCurrentState->Enter();
 
         // DO THIS AFTER LOADING TEXTURES!!!
-        if (renderSystem->LoadMedia() == false)
+        if (renderSystem->LoadAllMedia() == false)
         {
             SDL_Log( "Unable to load media!\n" );
             exitCode = 2;
@@ -337,12 +351,12 @@ int main( int argc, char* args[] )
             // Setting new state
             if (gCurrentState != prevState)
             {
-                // renderSystem->LoadMedia();
+                // renderSystem->LoadAllMedia();
                 // prevState = gCurrentState;
                 prevState->Exit();
                 delete prevState;
                 gCurrentState->Enter();
-                renderSystem->LoadMedia();
+                renderSystem->LoadAllMedia();
                 prevState = gCurrentState;
             }
 
@@ -352,7 +366,7 @@ int main( int argc, char* args[] )
             //     bool isNewShape = shapeSystem->Update();
             //     if (isNewShape)
             //     {
-            //         renderSystem->LoadMedia();
+            //         renderSystem->LoadAllMedia();
             //     }
             //
             //     // Loads the playing shape when needed
@@ -386,7 +400,7 @@ int main( int argc, char* args[] )
                     bool isNewShape = shapeSystem->Update();
                     if (isNewShape)
                     {
-                        renderSystem->LoadMedia();
+                        renderSystem->LoadAllMedia();
                     }
 
                     // Loads the playing shape when needed
@@ -411,6 +425,7 @@ int main( int argc, char* args[] )
             holdSystem->Update();
             playShapeSystem->Update();
             rowSystem->Update();
+            // scoreSystem->Update();
             renderSystem->Update();
 
             // If time remaining in frame

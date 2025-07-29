@@ -22,31 +22,7 @@ void addToDeleteRows(const std::vector<Entity>& row, std::vector<Entity>& blocks
         blocksToDelete.push_back(entity);
     }
 }
-    // auto renderSystem = gCoordinator.GetSystem<RenderSystem>();
-    // // Chaning it to white sprite when its a row
-    // for (const auto& entity : row)
-    // {
-    //     auto& texture = gCoordinator.GetComponent<TextureComponent>(entity);
-    //     texture.spriteClip.x = 120.f;
-    //     texture.spriteClip.y = 40.f;
-    // }
-    //
-    // renderSystem->Update();
-    // Timer animationTimer = Timer();
-    // float animationTime = 1.f;
-    // animationTimer.start();
-    //
-    // // This is like purposely creating a lagspike, which is actually how its like in the real tetris
-    // while (animationTimer.getTimeS() < animationTime)
-    // {
-    //     SDL_Log("Waiting");
-    // }
 
-//     for (const auto& entity : row)
-//     {
-//         gCoordinator.DestroyEntity(entity);
-//     }
-// }
 
 void RowSystem::Update()
 {
@@ -116,29 +92,24 @@ void RowSystem::Update()
 
 void RowSystem::DeleteRows()
 {
+    const int rowLength = 10;
+    const int pointsPerLine = 100;
+    int rowsDeleted = mBlocksToDelete.size() / rowLength;
     for (const auto& block : mBlocksToDelete)
     {
         gCoordinator.DestroyEntity(block);
     }
     mBlocksToDelete.clear();
     mCanMoveDown = true;
-}
 
-// void RowSystem::MoveBlocksDown()
-// {
-//     // Moving all down if row was deleted
-//     const float blockHeight = 40.f;
-//     for (auto row = mGrid.begin(); row != mGrid.end(); row++)
-//     {
-//         for (const auto& block : row->second)
-//         {
-//             auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(block);
-//             auto& transform = gCoordinator.GetComponent<TransformComponent>(block);
-//
-//             collider.position.y += blockHeight * mRowsRemoved;
-//             transform.position.y += blockHeight * mRowsRemoved;
-//         }
-//     }
-//     mRowsRemoved = 0;
-// }
+    // Updating the score and lines
+    if (rowsDeleted > 0)
+    {
+        // SDL_Log("Updating Score");
+        auto scoreSystem = gCoordinator.GetSystem<ScoreSystem>();
+        scoreSystem->score += pointsPerLine * rowsDeleted * rowsDeleted;
+        scoreSystem->lines += rowsDeleted;
+        scoreSystem->Update();
+    }
+}
 
