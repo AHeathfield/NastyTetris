@@ -21,4 +21,5 @@ private:
     std::vector<Entity> mBlocksToDelete;
     int mRowsRemoved = 0;
     bool mCanMoveDown = false;
+    int mLowestRowRemovedY = 0;
 };

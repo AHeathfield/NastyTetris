@@ -51,17 +51,22 @@ void RowSystem::Update()
         {
             for (auto row = mGrid.begin(); row != mGrid.end(); row++)
             {
-                for (const auto& block : row->second)
+                // To make sure it doesnt move rows below the one that was removed
+                if (row->first < mLowestRowRemovedY)
                 {
-                    // SDL_Log("Moving Down");
-                    auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(block);
-                    auto& transform = gCoordinator.GetComponent<TransformComponent>(block);
+                    for (const auto& block : row->second)
+                    {
+                        // SDL_Log("Moving Down");
+                        auto& collider = gCoordinator.GetComponent<BoxColliderComponent>(block);
+                        auto& transform = gCoordinator.GetComponent<TransformComponent>(block);
 
-                    collider.position.y += blockHeight * mRowsRemoved;
-                    transform.position.y += blockHeight * mRowsRemoved;
+                        collider.position.y += blockHeight * mRowsRemoved;
+                        transform.position.y += blockHeight * mRowsRemoved;
+                    }
                 }
             }
             mRowsRemoved = 0;
+            mLowestRowRemovedY = 0;
         }
 
         mCanMoveDown = false;
@@ -74,9 +79,13 @@ void RowSystem::Update()
     {
         if (row->second.size() == rowLength)
         {
+            // To make sure no rows moved are rows below note +y is down
+            if (row->first > mLowestRowRemovedY)
+            {
+                mLowestRowRemovedY = row->first;
+            }
+
             // Delete row
-            // std::string log = "Delete row: " + std::to_string(row->first);
-            // SDL_Log(log.c_str());
             addToDeleteRows(row->second, mBlocksToDelete);
             mGrid.erase(row->first);
             mRowsRemoved++;
