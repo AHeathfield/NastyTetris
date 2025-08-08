@@ -46,6 +46,24 @@ void PlayState::Enter()
     //             .spriteClip = SDL_FRect{0.f, 0.f, 480.f, 40.f},
     //             .path = "src/Assets/debug.png",
     //         });
+    
+    mTopBoundCollider = gCoordinator.CreateEntity();
+    gCoordinator.AddComponent(
+            mTopBoundCollider,
+            BoxColliderComponent{
+                .position = Vector2(720.f, 100.f),
+                .w = 1200 - 720,
+                .h = 40
+            });
+    gCoordinator.AddComponent(
+            mTopBoundCollider,
+            TransformComponent{
+                .position = Vector2(720.f, 100.f),
+            });
+    gCoordinator.AddComponent(
+            mTopBoundCollider,
+            BoundaryComponent{
+            });
 
 
     mRightBoundCollider = gCoordinator.CreateEntity();

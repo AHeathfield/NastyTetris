@@ -61,7 +61,7 @@ Shape* ShapeSystem::GetNextShape()
     // }
     Shape* nextShape = mHoldingShapes.back();
     mHoldingShapes.pop_back();
-    nextShape->Move(-520.f, -80.f);
+    nextShape->Move(-480.f, -120.f);
 
     return nextShape;
 }

@@ -1,4 +1,5 @@
 #include "CollisionSystem.h"
+#include "PlayShapeSystem.h"
 #include <SDL3/SDL_log.h>
 #include <string>
 
@@ -12,6 +13,12 @@ void CollisionSystem::UpdateCollisions(Shape* currentShape)
     mCollisionBottom = false;
     mCollisionLeft = false;
     mCollisionRight = false;
+    mCollisionTop = false;
+
+    if (mDeathCollision)
+    {
+        SDL_Log("GAME OVER");
+    }
 
     for (const auto& entityA : mEntities)
     {
@@ -63,6 +70,11 @@ void CollisionSystem::UpdateCollisions(Shape* currentShape)
 
             // Used to check if a line is created
             gCoordinator.AddComponent(entity, RowComponent{});
+
+            if (currentShape != nullptr)
+            {
+                mDeathCollision = currentShape->mShapePos.y == 140.f;
+            }
         }
     }
     mMoveMoves = Vector2();
@@ -115,13 +127,19 @@ void CollisionSystem::UpdateMoveComponents()
     mMoveMoves = Vector2();
 }
 
-void CollisionSystem::checkCollisionSide(const Vector2& aCollider, const Vector2& aCurrentPos, const Vector2& bPos)
+void CollisionSystem::checkCollisionSide(const Vector2& aCollider, const Vector2& aCurrentPos, Entity b)//const Vector2& bPos)
 {
+    Vector2 bPos = gCoordinator.GetComponent<TransformComponent>(b).position;
+
     // For the boundaries
     if (bPos.y == 940)
     {
         mCollisionBottom = true;
     }
+    // else if (bPos.y == 100 && gCoordinator.HasComponent<DeathComponent>(b))
+    // {
+    //     mDeathCollision = true;
+    // }
     else if (bPos.x == 720)
     {
         mCollisionLeft = true;
@@ -143,6 +161,10 @@ void CollisionSystem::checkCollisionSide(const Vector2& aCollider, const Vector2
     if (aCollider.x > aCurrentPos.x)
     {
         mCollisionRight = true;
+    }
+    if (aCollider.y < aCurrentPos.y)
+    {
+        mCollisionTop = true;
     }
 }
 
@@ -204,8 +226,8 @@ void CollisionSystem::checkEntityCollision(Entity entityA, const BoxColliderComp
             if (checkCollision(colliderA, colliderB))
             {
                 // SDL_Log("COLLISION");
-                const auto& transformB = gCoordinator.GetComponent<TransformComponent>(entityB);
-                checkCollisionSide(colliderA.position, transformA.position, transformB.position);
+                // const auto& transformB = gCoordinator.GetComponent<TransformComponent>(entityB);
+                checkCollisionSide(colliderA.position, transformA.position, entityB);
 
                 if (currentShape->isRotated)
                 {

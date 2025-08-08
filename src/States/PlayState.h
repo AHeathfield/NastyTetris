@@ -24,4 +24,5 @@ private:
     Entity mBottomBoundCollider;
     Entity mRightBoundCollider;
     Entity mLeftBoundCollider;
+    Entity mTopBoundCollider;
 };
