@@ -37,6 +37,7 @@ set(SRCS
     src/Systems/ScoreSystem.cpp
     src/States/TitleState.cpp
     src/States/PlayState.cpp
+    src/States/ScoreState.cpp
     src/Components/Buttons/StateChangerButton.cpp
     src/Shapes/LShape.cpp
     src/Shapes/ReverseLShape.cpp
@@ -56,28 +57,6 @@ else()
     # WIN32 is needed for windows, it is ignored for linux
     add_executable(game WIN32 ${SRCS})
 endif()
-# add_executable(game WIN32 game.cpp 
-#     src/Systems/RenderSystem.cpp
-#     src/Systems/MouseButtonSystem.cpp
-#     src/Systems/PhysicsSystem.cpp
-#     src/Systems/CollisionSystem.cpp
-#     src/Systems/PlayerEventSystem.cpp
-#     src/Systems/ShapeSystem.cpp
-#     src/Systems/PlayShapeSystem.cpp
-#     src/Systems/HoldSystem.cpp
-#     src/Systems/RowSystem.cpp
-#     src/Systems/ScoreSystem.cpp
-#     src/States/TitleState.cpp
-#     src/States/PlayState.cpp
-#     src/Components/Buttons/StateChangerButton.cpp
-#     src/Shapes/LShape.cpp
-#     src/Shapes/ReverseLShape.cpp
-#     src/Shapes/TShape.cpp
-#     src/Shapes/ZShape.cpp
-#     src/Shapes/ReverseZShape.cpp
-#     src/Shapes/LineShape.cpp
-#     src/Shapes/SquareShape.cpp
-#     )
 
 # Link to the actual SDL3 library.
 target_link_libraries(game PRIVATE SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf SDL3_image::SDL3_image SDL3::SDL3)

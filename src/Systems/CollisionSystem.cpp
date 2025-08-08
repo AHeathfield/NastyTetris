@@ -19,7 +19,7 @@ void CollisionSystem::UpdateCollisions(Shape* currentShape)
     if (mDeathCollision)
     {
         SDL_Log("GAME OVER");
-        gCurrentState = new TitleState();
+        gCurrentState = new ScoreState();
         mDeathCollision = false;
     }
 

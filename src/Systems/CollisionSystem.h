@@ -2,7 +2,8 @@
 
 #include "../Core/ECS.h"
 #include "../States/State.h"
-#include "../States/TitleState.h"
+#include "../States/ScoreState.h"
+// #include "../States/TitleState.h"
 #include "../Components/BoxColliderComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/MoveComponent.h"
