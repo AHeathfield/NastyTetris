@@ -9,6 +9,7 @@
 #include "../Shapes/Shape.h"
 #include "../Systems/HoldSystem.h"
 #include "../Systems/PlayShapeSystem.h"
+#include "../Systems/ScoreSystem.h"
 
 class PlayerEventSystem : public System
 {

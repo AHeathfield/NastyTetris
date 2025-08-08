@@ -46,6 +46,7 @@ void PlayerEventSystem::HandleEvent(SDL_Event e)
                 holdSystem->HoldShape(playShapeSystem->currentShape);
             }
 
+            bool scoreAdded = false;
             for (const auto& entity : mEntities)
             {
                 // TODO: Use command pattern!
@@ -69,6 +70,15 @@ void PlayerEventSystem::HandleEvent(SDL_Event e)
                     const auto& moveComponent = gCoordinator.GetComponent<MoveComponent>(entity);
 
                     collider.position.y += moveComponent.distance;
+
+                    if (scoreAdded == false)
+                    {
+                        auto scoreSystem = gCoordinator.GetSystem<ScoreSystem>();
+                        scoreSystem->score += 1;
+                        scoreSystem->Update();
+
+                        scoreAdded = true;
+                    }
                 }
             }
         }
