@@ -12,6 +12,7 @@ class HoldSystem : public System
 public:
     void Update();
     void HoldShape(Shape* newShape);
+    void Close();
     // Shape* ReleaseShape();
  
     Shape* currentShape = nullptr;
@@ -22,5 +23,4 @@ public:
 
 private:
     Shape* oldShape = nullptr;
-
 };

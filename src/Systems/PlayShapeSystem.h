@@ -15,6 +15,7 @@ public:
     void PlayNextShape(Shape* nextShape);
     bool isNoPlayingShape();
     void UpdateRefEntity();
+    void Close();
 
     Shape* currentShape = nullptr;
     Entity mRefEntity;

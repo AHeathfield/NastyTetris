@@ -14,6 +14,7 @@ class RowSystem : public System
 public:
     void Update();
     void DeleteRows();
+    void Close();
     // void MoveBlocksDown();
 
 private:

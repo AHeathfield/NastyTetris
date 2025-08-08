@@ -124,3 +124,12 @@ void RowSystem::DeleteRows()
     }
 }
 
+void RowSystem::Close()
+{
+    std::set<Entity> copyEntities = mEntities;
+    for (const auto& entity : copyEntities)
+    {
+        gCoordinator.GetComponent<TextureComponent>(entity).destroy();
+        gCoordinator.DestroyEntity(entity);
+    }
+}

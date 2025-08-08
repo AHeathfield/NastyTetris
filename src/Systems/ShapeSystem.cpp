@@ -66,3 +66,14 @@ Shape* ShapeSystem::GetNextShape()
     return nextShape;
 }
 
+void ShapeSystem::Close()
+{
+    for (int i = 0; i < mHoldingShapes.size(); i++)
+    {
+        mHoldingShapes[i]->Destroy();
+
+        // Might need to free the memory idk
+        mHoldingShapes[i] = nullptr;
+    }
+    mHoldingShapes.clear();
+}

@@ -1,4 +1,5 @@
 #include "PlayState.h"
+#include <vector>
 
 extern Coordinator gCoordinator;
 
@@ -124,4 +125,18 @@ void PlayState::Exit()
     textureComponent.destroy();
 
     gCoordinator.DestroyEntity(mBackground);
+
+    // Destroying colliders
+    std::vector<Entity> entities = {mBottomBoundCollider, mRightBoundCollider, mLeftBoundCollider, mTopBoundCollider};
+    for (const auto& entity : entities)
+    {
+        gCoordinator.DestroyEntity(entity);
+    }
+
+    // Closing Systems involved
+    gCoordinator.GetSystem<ScoreSystem>()->Close();
+    gCoordinator.GetSystem<PlayShapeSystem>()->Close();
+    gCoordinator.GetSystem<HoldSystem>()->Close();
+    gCoordinator.GetSystem<ShapeSystem>()->Close();
+    gCoordinator.GetSystem<RowSystem>()->Close();
 }

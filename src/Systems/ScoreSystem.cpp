@@ -2,6 +2,7 @@
 // #include "Shape.h"
 #include <cmath>
 #include <string>
+#include <vector>
 
 extern Coordinator gCoordinator;
 
@@ -124,4 +125,15 @@ void ScoreSystem::Update()
     renderSystem->LoadMedia(&scoreText);
     renderSystem->LoadMedia(&levelText);
     renderSystem->LoadMedia(&linesText);
+}
+
+
+void ScoreSystem::Close()
+{
+    std::vector<Entity> entities = {mScore, mLevel, mLines};
+    for (const auto& entity : entities)
+    {
+        gCoordinator.GetComponent<TextureComponent>(entity).destroy();
+        gCoordinator.DestroyEntity(entity);
+    }
 }

@@ -76,3 +76,12 @@ bool PlayShapeSystem::isNoPlayingShape()
 {
     return mEntities.empty();
 }
+
+void PlayShapeSystem::Close()
+{
+    if (currentShape != nullptr)
+    {
+        currentShape->Destroy();
+        currentShape = nullptr;
+    }
+}

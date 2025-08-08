@@ -59,3 +59,17 @@ void HoldSystem::HoldShape(Shape* newShape)
     // SDL_Log("Holding");
     currentShape = newShape;
 }
+
+void HoldSystem::Close()
+{
+    if (currentShape != nullptr)
+    {
+        currentShape->Destroy();
+        currentShape = nullptr;
+    }
+    if (oldShape != nullptr)
+    {
+        oldShape->Destroy();
+        oldShape = nullptr;
+    }
+}

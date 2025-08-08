@@ -4,6 +4,7 @@
 #include <string>
 
 extern Coordinator gCoordinator;
+extern State* gCurrentState;
 
 void CollisionSystem::UpdateCollisions(Shape* currentShape)
 {
@@ -18,6 +19,8 @@ void CollisionSystem::UpdateCollisions(Shape* currentShape)
     if (mDeathCollision)
     {
         SDL_Log("GAME OVER");
+        gCurrentState = new TitleState();
+        mDeathCollision = false;
     }
 
     for (const auto& entityA : mEntities)

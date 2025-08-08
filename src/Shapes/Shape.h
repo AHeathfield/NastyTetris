@@ -6,6 +6,7 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/MoveComponent.h"
 #include "../Components/TetrisGravityComponent.h"
+#include "../Components/TextureComponent.h"
 #include <SDL3/SDL_log.h>
 #include <string>
 #include <vector>
@@ -104,6 +105,18 @@ public:
         {
             gCoordinator.RemoveComponent<MoveComponent>(entity);
             gCoordinator.RemoveComponent<TetrisGravityComponent>(entity);
+        }
+    }
+
+    // Destroys the shape
+    void Destroy()
+    {
+        std::vector<Entity> entities = GetEntities();
+
+        for (const auto& entity : entities)
+        {
+            gCoordinator.GetComponent<TextureComponent>(entity).destroy();
+            gCoordinator.DestroyEntity(entity);
         }
     }
 

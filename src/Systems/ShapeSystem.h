@@ -17,6 +17,7 @@ class ShapeSystem : public System
 public:
     bool Update();
     Shape* GetNextShape();
+    void Close();
 
     // Shape* currentShape = nullptr;
 

@@ -11,6 +11,7 @@ class ScoreSystem : public System
 public:
     void Init();
     void Update();
+    void Close();
 
     int score;
     int level;
@@ -18,5 +19,4 @@ public:
 
 private:
     Entity mScore, mLevel, mLines;
-    TextureComponent mScoreText, mLevelText, mLinesText;
 };

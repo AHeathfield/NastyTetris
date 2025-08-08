@@ -8,6 +8,10 @@
 // #include "../Components/MoveComponent.h"
 #include "../Components/BoundaryComponent.h"
 #include "../Systems/ScoreSystem.h"
+#include "../Systems/PlayShapeSystem.h"
+#include "../Systems/HoldSystem.h"
+#include "../Systems/ShapeSystem.h"
+#include "../Systems/RowSystem.h"
 // #include "../Shapes/Shape.h"
 // #include "../Shapes/LShape.h"
 
