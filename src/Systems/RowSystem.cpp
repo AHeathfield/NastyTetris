@@ -116,8 +116,10 @@ void RowSystem::DeleteRows()
     {
         // SDL_Log("Updating Score");
         auto scoreSystem = gCoordinator.GetSystem<ScoreSystem>();
-        scoreSystem->score += pointsPerLine * rowsDeleted * rowsDeleted;
+        scoreSystem->score += pointsPerLine * rowsDeleted * rowsDeleted * scoreSystem->level;
         scoreSystem->lines += rowsDeleted;
+        scoreSystem->level = (scoreSystem->lines / 10) + 1;
+
         scoreSystem->Update();
     }
 }

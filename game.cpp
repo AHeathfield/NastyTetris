@@ -417,6 +417,12 @@ int main( int argc, char* args[] )
                 // Deletes the rows that are completed
                 rowSystem->DeleteRows();
 
+                // Updates the delta time
+                if (deltaTime > 0.3f)
+                {
+                    deltaTime = 0.8f - (scoreSystem->level - 1) * 0.05f;
+                }
+
                 updateTimer.reset();
             }
 

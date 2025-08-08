@@ -22,7 +22,7 @@ void ScoreSystem::Init()
 {
     // The scores
     score = 0;
-    level = 0;
+    level = 1;
     lines = 0;
 
     // The entities
@@ -55,7 +55,7 @@ void ScoreSystem::Init()
                 .path = "src/Assets/8bit16.ttf",
                 .isText = true,
                 .fontSize = 40,
-                .text = "00000000",
+                .text = "00000001",
             });
     gCoordinator.AddComponent(
             mLevel, 
