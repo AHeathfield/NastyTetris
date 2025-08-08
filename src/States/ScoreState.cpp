@@ -43,10 +43,23 @@ void ScoreState::Enter()
             button
             );
     button = nullptr;
+
+
+    // For text input
+    auto renderSystem = gCoordinator.GetSystem<RenderSystem>();
+    renderSystem->EnableTextInput();
+    auto textEventSystem = gCoordinator.GetSystem<TextEventSystem>();
+    textEventSystem->Init();
+
 }
 
 void ScoreState::Exit()
 {
+    auto renderSystem = gCoordinator.GetSystem<RenderSystem>();
+    renderSystem->DisableTextInput();
+    auto textEventSystem = gCoordinator.GetSystem<TextEventSystem>();
+    textEventSystem->Close();
+
     // Destroy the Texture component
     auto& textureComponent = gCoordinator.GetComponent<TextureComponent>(mBackground);
     textureComponent.destroy();

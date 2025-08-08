@@ -1,4 +1,5 @@
 #include "RenderSystem.h"
+#include <SDL3/SDL_keyboard.h>
 #include <SDL3/SDL_log.h>
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
@@ -155,6 +156,17 @@ void RenderSystem::Render(TransformComponent transfromComponent, TextureComponen
         SDL_RenderTextureRotated(mRenderer, textureComponent.texture, nullptr, &dstRect, degrees, center, flipMode );
     }
 
+}
+
+
+void RenderSystem::EnableTextInput()
+{
+    SDL_StartTextInput(mWindow);
+}
+
+void RenderSystem::DisableTextInput()
+{
+    SDL_StopTextInput(mWindow);
 }
 
 

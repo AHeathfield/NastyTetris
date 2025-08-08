@@ -21,6 +21,10 @@ public:
     // Renders texture
     void Render(TransformComponent transfromComponent, TextureComponent textureComponent, double degrees = 0.0, SDL_FPoint* center = nullptr, SDL_FlipMode flipMode = SDL_FLIP_NONE );
 
+    // TODO: ADD THIS TO CHUCK NORRIS GAME!!
+    void EnableTextInput();
+    void DisableTextInput();
+
     // Closing stuff
     void Close();
 

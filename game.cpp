@@ -33,11 +33,13 @@
 #include "src/Systems/HoldSystem.h"
 #include "src/Systems/RowSystem.h"
 #include "src/Systems/ScoreSystem.h"
+#include "src/Systems/TextEventSystem.h"
 
 // States
 #include "src/States/State.h"
 #include "src/States/TitleState.h"
 #include "src/States/PlayState.h"
+#include "src/States/ScoreState.h"
 
 // Core
 #include "src/Core/Timer.h"
@@ -261,6 +263,15 @@ int main( int argc, char* args[] )
         gCoordinator.SetSystemSignature<PlayerEventSystem>(signature);
     }
 
+    // Text Event System (SHOULD NOT BE A SYSTEM SHOULD BE HANDLED BY STATE)
+    auto textEventSystem = gCoordinator.RegisterSystem<TextEventSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<TransformComponent>());
+        signature.set(gCoordinator.GetComponentType<TextureComponent>());
+        gCoordinator.SetSystemSignature<TextEventSystem>(signature);
+    }
+
     // Shape System
     auto shapeSystem = gCoordinator.RegisterSystem<ShapeSystem>();
     {
@@ -389,6 +400,11 @@ int main( int argc, char* args[] )
 
                 mouseButtonSystem->HandleEvent(&e);
                 playerEventSystem->HandleEvent(e);
+
+                if (typeid(*gCurrentState) == typeid(ScoreState))
+                {
+                    textEventSystem->HandleEvent(e);
+                }
             }
             
 

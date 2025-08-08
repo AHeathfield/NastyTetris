@@ -30,6 +30,7 @@ set(SRCS
     src/Systems/PhysicsSystem.cpp
     src/Systems/CollisionSystem.cpp
     src/Systems/PlayerEventSystem.cpp
+    src/Systems/TextEventSystem.cpp
     src/Systems/ShapeSystem.cpp
     src/Systems/PlayShapeSystem.cpp
     src/Systems/HoldSystem.cpp

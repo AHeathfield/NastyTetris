@@ -7,6 +7,8 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/Buttons/ButtonComponent.h"
 #include "../Components/Buttons/StateChangerButton.h"
+#include "../Systems/TextEventSystem.h"
+#include "../Systems/RenderSystem.h"
 
 class ScoreState : public State
 {
