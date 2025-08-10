@@ -101,7 +101,6 @@ std::string getNumberString(int digits, int gameNumber)
     }
 
     return numberStr + std::to_string(gameNumber);
-
 }
 
 void ScoreSystem::Update()
@@ -136,4 +135,9 @@ void ScoreSystem::Close()
         gCoordinator.GetComponent<TextureComponent>(entity).destroy();
         gCoordinator.DestroyEntity(entity);
     }
+}
+
+std::string ScoreSystem::GetScore()
+{
+    return getNumberString(getNumberOfDigits(score), score);
 }

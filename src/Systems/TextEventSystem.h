@@ -1,5 +1,8 @@
 #pragma once
 
+#include <iostream>
+#include <fstream>
+
 #include "../Core/ECS.h"
 #include <SDL3/SDL_events.h>
 
@@ -18,5 +21,10 @@ public:
     void Close();
 
 private:
+    void Save();
+
+private:
+    Entity mFinalScore;
     Entity mTextField;
+    std::vector<Entity> mScores;
 };

@@ -33,7 +33,7 @@ void ScoreState::Enter()
     gCoordinator.AddComponent(
             mPlayButton,
             TransformComponent{
-                .position = Vector2((1920 - 517) / 2.f, 1080 - 350),
+                .position = Vector2(100.f, (1080 / 2.f) - (183.f / 2.f)),
                 .rotation = Vector2(),
                 .scale = Vector2()
             });

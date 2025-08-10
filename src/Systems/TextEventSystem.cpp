@@ -4,9 +4,54 @@
 
 extern Coordinator gCoordinator;
 
+
 void TextEventSystem::Init()
 {
-    mTextField = gCoordinator.CreateEntity();
+    auto scoreSystem = gCoordinator.GetSystem<ScoreSystem>();
+
+    // Opening score file in read mode
+    std::ifstream file("src/Scores.txt");
+    std::string line;
+    
+    // Creates entities to hold the text to render
+    int count = 1;
+    while (getline(file, line))
+    {
+        // SDL_Log(line.c_str());
+        Entity score = gCoordinator.CreateEntity();
+        score = gCoordinator.CreateEntity();
+        gCoordinator.AddComponent(
+                score,
+                TextureComponent{
+                    .texture = nullptr,
+                    .path = "src/Assets/8bit16.ttf",
+                    .isText = true,
+                    .fontSize = 32,
+                    .text = line,
+                });
+        gCoordinator.AddComponent(
+                score, 
+                TransformComponent{
+                    .position = Vector2(780.f, 260.f + (64 * count))
+                });
+        mScores.push_back(score);
+
+        count++;
+    }
+
+    if (file.eof())
+    {
+        SDL_Log("REACHED END OF FILE");
+    }
+    else
+    {
+        SDL_Log("Error reading file");
+    }
+
+    file.close();
+
+
+    // Test creating writable text
     mTextField = gCoordinator.CreateEntity();
     gCoordinator.AddComponent(
             mTextField,
@@ -20,9 +65,26 @@ void TextEventSystem::Init()
     gCoordinator.AddComponent(
             mTextField, 
             TransformComponent{
-                .position = Vector2(888.f, 260.f)
+                // .position = Vector2(888.f, 260.f)
+                .position = Vector2(58.f, 260.f)
             });
 
+    // Displaying final score
+    mFinalScore = gCoordinator.CreateEntity();
+    gCoordinator.AddComponent(
+            mFinalScore,
+            TextureComponent{
+                .texture = nullptr,
+                .path = "src/Assets/8bit16.ttf",
+                .isText = true,
+                .fontSize = 64,
+                .text = scoreSystem->GetScore(),
+            });
+    gCoordinator.AddComponent(
+            mFinalScore, 
+            TransformComponent{
+                .position = Vector2(774.f, 260.f)
+            });
 }
 
 void TextEventSystem::HandleEvent(SDL_Event e)

@@ -5,6 +5,7 @@
 #include "../Components/TextureComponent.h"
 #include "../Components/TransformComponent.h"
 #include "RenderSystem.h"
+#include <string>
 
 class ScoreSystem : public System
 {
@@ -12,6 +13,8 @@ public:
     void Init();
     void Update();
     void Close();
+
+    std::string GetScore();
 
     int score;
     int level;
