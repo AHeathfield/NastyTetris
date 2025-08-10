@@ -137,7 +137,7 @@ void ScoreSystem::Close()
     }
 }
 
-std::string ScoreSystem::GetScore()
+std::string ScoreSystem::GetScoreString()
 {
     return getNumberString(getNumberOfDigits(score), score);
 }

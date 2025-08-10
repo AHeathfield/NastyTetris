@@ -5,6 +5,7 @@
 
 #include "../Core/ECS.h"
 #include <SDL3/SDL_events.h>
+#include <string>
 
 #include "../Components/BoxColliderComponent.h"
 #include "../Components/MoveComponent.h"
@@ -27,4 +28,7 @@ private:
     Entity mFinalScore;
     Entity mTextField;
     std::vector<Entity> mScores;
+    std::string mName = "AAA";
+
+    bool mIsFinalScoreHigh = false;
 };

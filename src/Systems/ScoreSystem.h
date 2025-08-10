@@ -14,7 +14,7 @@ public:
     void Update();
     void Close();
 
-    std::string GetScore();
+    std::string GetScoreString();
 
     int score;
     int level;
