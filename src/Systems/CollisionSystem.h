@@ -10,6 +10,7 @@
 #include "../Components/BoundaryComponent.h"
 #include "../Components/TetrisGravityComponent.h"
 #include "../Components/RowComponent.h"
+#include "../Components/AudioComponent.h"
 #include "../Shapes/Shape.h"
 #include <set>
 
@@ -17,6 +18,7 @@
 class CollisionSystem : public System
 {
 public:
+    void Init();
     void UpdateCollisions(Shape* currentShape);
     void UpdateTransforms();
     void UpdateMoveComponents();
@@ -43,4 +45,6 @@ private:
     std::set<Entity> mMoveSet;
     Vector2 mMoveMoves = Vector2();
     bool mRemoveMoves = false;
+
+    Entity mPlaceSFX;
 };

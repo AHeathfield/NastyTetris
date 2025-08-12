@@ -72,8 +72,8 @@ void AudioSystem::LoadAudio(Audio& audio)
             // mAudios.insert({audio.filePath, audio});
 
             // Allocate channels (not sure if music channel needs to be allocated aswell, maybe)
-            mChannelCount = Mix_AllocateChannels(mSFXs.size());
-            if (mChannelCount != mSFXs.size())
+            mChannelCount = Mix_AllocateChannels(mSFXs.size() + mMusics.size());
+            if (mChannelCount != mSFXs.size() + mMusics.size())
             {
                 SDL_Log( "Unable to allocate channels! SDL_mixer error: %s\n", SDL_GetError() );
             }
@@ -98,7 +98,7 @@ void AudioSystem::LoadAudio(Audio& audio)
 void AudioSystem::Update()
 {
     std::set<std::string> currentEntityAudios;
-    int freeChannel = -1;
+    int freeChannel = 0;
 
     // Loading audios and playing them
     for (const auto& entity : mEntities)
@@ -151,6 +151,7 @@ void AudioSystem::Update()
                 {
                     // Channel to play on, audio. int loops
                     Mix_PlayChannel(freeChannel, audio.sfx, 0);
+                    freeChannel++;
 
                     // So they don't constantly play
                     audio.isPlaying = false;
@@ -176,13 +177,15 @@ void AudioSystem::Update()
         std::string filePath = *it;
         if (currentEntityAudios.find(filePath) == currentEntityAudios.end())
         {
-            if (Mix_PlayingMusic() != 0)
+            if (Mix_PlayingMusic() != 0 && mMusics.find(filePath) != mMusics.end())
             {
+                // SDL_Log("Stopping music");
                 Mix_HaltMusic();
             }
 
             // Logic to erase sfx?
-            // ...
+            else
+            {}
 
             toBeErased.push_back(filePath);
         }
@@ -192,7 +195,6 @@ void AudioSystem::Update()
     // Removing audios that are not playing from the playing set
     for (int i = 0; i < toBeErased.size(); i++)
     {
-        SDL_Log("REMOVING");
         mPlaying.erase(toBeErased[i]);
     }
 }

@@ -6,6 +6,22 @@
 
 extern Coordinator gCoordinator;
 
+// Just for the rowsfx
+void RowSystem::Init()
+{
+    mRowSFX = gCoordinator.CreateEntity();
+    std::unordered_map<std::string, Audio> entityAudios;
+    Audio rowSFX = {
+        .filePath = "src/Assets/SFX/RowSFX.wav",
+    };
+    entityAudios.insert({"Row", rowSFX});
+    gCoordinator.AddComponent(
+            mRowSFX,
+            AudioComponent{
+                .audios = entityAudios
+            });
+}
+
 // Helper method
 // THIS SHOULD BE ALIGNED WITH THE AMOUNT OF TIME IT TAKES TO FALL
 // Think about removing the RowCOmponent
@@ -74,6 +90,7 @@ void RowSystem::Update()
 
     // Deleting Rows
     const int rowLength = 10;
+    bool isDeletion = false;
     std::unordered_map<float, std::vector<Entity>> mGridCopy = mGrid;
     for (auto row = mGridCopy.begin(); row != mGridCopy.end(); row++)
     {
@@ -89,12 +106,19 @@ void RowSystem::Update()
             addToDeleteRows(row->second, mBlocksToDelete);
             mGrid.erase(row->first);
             mRowsRemoved++;
+            isDeletion = true;
         }
         else
         {
             // Clear the vector
             mGrid.at(row->first).clear();
         }
+    }
+
+    if (isDeletion)
+    {
+        // Playing sound effect for deleted row
+        gCoordinator.GetComponent<AudioComponent>(mRowSFX).Play("Row");
     }
 }
 
@@ -114,6 +138,7 @@ void RowSystem::DeleteRows()
     // Updating the score and lines
     if (rowsDeleted > 0)
     {
+
         // SDL_Log("Updating Score");
         auto scoreSystem = gCoordinator.GetSystem<ScoreSystem>();
         scoreSystem->score += pointsPerLine * rowsDeleted * rowsDeleted * scoreSystem->level;

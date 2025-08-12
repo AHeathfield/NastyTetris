@@ -264,6 +264,7 @@ int main( int argc, char* args[] )
         signature.set(gCoordinator.GetComponentType<BoxColliderComponent>());
         gCoordinator.SetSystemSignature<CollisionSystem>(signature);
     }
+    collisionSystem->Init();
 
     // Player Event System
     auto playerEventSystem = gCoordinator.RegisterSystem<PlayerEventSystem>();
@@ -316,6 +317,7 @@ int main( int argc, char* args[] )
         signature.set(gCoordinator.GetComponentType<TextureComponent>());
         gCoordinator.SetSystemSignature<RowSystem>(signature);
     }
+    rowSystem->Init();
 
     // Score System
     auto scoreSystem = gCoordinator.RegisterSystem<ScoreSystem>();

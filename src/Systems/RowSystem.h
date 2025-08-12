@@ -5,6 +5,7 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/BoxColliderComponent.h"
 #include "../Components/RowComponent.h"
+#include "../Components/AudioComponent.h"
 #include "RenderSystem.h"
 #include "ScoreSystem.h"
 #include "../Core/Timer.h"
@@ -12,6 +13,7 @@
 class RowSystem : public System
 {
 public:
+    void Init();
     void Update();
     void DeleteRows();
     void Close();
@@ -23,4 +25,6 @@ private:
     int mRowsRemoved = 0;
     bool mCanMoveDown = false;
     int mLowestRowRemovedY = 0;
+
+    Entity mRowSFX;
 };

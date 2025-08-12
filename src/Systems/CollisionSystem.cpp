@@ -6,6 +6,21 @@
 extern Coordinator gCoordinator;
 extern State* gCurrentState;
 
+void CollisionSystem::Init()
+{
+    mPlaceSFX = gCoordinator.CreateEntity();
+    std::unordered_map<std::string, Audio> entityAudios;
+    Audio rowSFX = {
+        .filePath = "src/Assets/SFX/PlaceSFX.wav",
+    };
+    entityAudios.insert({"Place", rowSFX});
+    gCoordinator.AddComponent(
+            mPlaceSFX,
+            AudioComponent{
+                .audios = entityAudios
+            });
+}
+
 void CollisionSystem::UpdateCollisions(Shape* currentShape)
 {
     std::set<Entity> moveEntities;
@@ -60,6 +75,11 @@ void CollisionSystem::UpdateCollisions(Shape* currentShape)
         }
     }
 
+    // For sfx
+    if (mStopMoving)
+    {
+        gCoordinator.GetComponent<AudioComponent>(mPlaceSFX).Play("Place");
+    }
     // Update the components
     for (const auto& entity : moveEntities)
     {
