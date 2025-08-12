@@ -56,6 +56,7 @@ void TextEventSystem::Init()
         if (scoreStr.substr(0, 2) == "10")
         {
             scoreStr = line.substr(8, 8);
+            SDL_Log(scoreStr.c_str());
         }
         else
         {
@@ -85,6 +86,12 @@ void TextEventSystem::Init()
                     });
             mScores.push_back(mTextField);
             count++;
+
+            // If they get 10th
+            if (count > 10)
+            {
+                break;
+            }
         }
 
 
