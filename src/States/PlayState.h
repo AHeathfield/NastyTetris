@@ -7,11 +7,13 @@
 #include "../Components/BoxColliderComponent.h"
 // #include "../Components/MoveComponent.h"
 #include "../Components/BoundaryComponent.h"
+#include "../Components/AudioComponent.h"
 #include "../Systems/ScoreSystem.h"
 #include "../Systems/PlayShapeSystem.h"
 #include "../Systems/HoldSystem.h"
 #include "../Systems/ShapeSystem.h"
 #include "../Systems/RowSystem.h"
+#include "../Systems/AudioSystem.h"
 // #include "../Shapes/Shape.h"
 // #include "../Shapes/LShape.h"
 
@@ -29,4 +31,6 @@ private:
     Entity mRightBoundCollider;
     Entity mLeftBoundCollider;
     Entity mTopBoundCollider;
+
+    Entity mBGMusic;
 };

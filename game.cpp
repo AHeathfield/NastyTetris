@@ -22,6 +22,7 @@
 #include "src/Components/HoldComponent.h"
 #include "src/Components/RowComponent.h"
 #include "src/Components/ScoreComponent.h"
+#include "src/Components/AudioComponent.h"
 
 #include "src/Systems/RenderSystem.h"
 #include "src/Systems/MouseButtonSystem.h"
@@ -34,6 +35,7 @@
 #include "src/Systems/RowSystem.h"
 #include "src/Systems/ScoreSystem.h"
 #include "src/Systems/TextEventSystem.h"
+#include "src/Systems/AudioSystem.h"
 
 // States
 #include "src/States/State.h"
@@ -212,6 +214,7 @@ int main( int argc, char* args[] )
     gCoordinator.RegisterComponent<HoldComponent>();
     gCoordinator.RegisterComponent<RowComponent>();
     gCoordinator.RegisterComponent<ScoreComponent>();
+    gCoordinator.RegisterComponent<AudioComponent>();
     gCoordinator.RegisterComponent<ButtonComponent*>();
 
     // Registering Systems
@@ -221,10 +224,18 @@ int main( int argc, char* args[] )
         Signature signature;
         signature.set(gCoordinator.GetComponentType<TextureComponent>());
         signature.set(gCoordinator.GetComponentType<TransformComponent>());
-        // TODO: EXPLAIN I FORGOT THIS LINE ON NEXT STREAM
         gCoordinator.SetSystemSignature<RenderSystem>(signature);
     }
     renderSystem->Init();
+
+    // Render System
+    auto audioSystem = gCoordinator.RegisterSystem<AudioSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<AudioComponent>());
+        gCoordinator.SetSystemSignature<AudioSystem>(signature);
+    }
+    audioSystem->Init();
 
     // Mouse Button System
     auto mouseButtonSystem = gCoordinator.RegisterSystem<MouseButtonSystem>();
@@ -449,6 +460,7 @@ int main( int argc, char* args[] )
             rowSystem->Update();
             // scoreSystem->Update();
             renderSystem->Update();
+            audioSystem->Update();
 
             // If time remaining in frame
             constexpr Uint64 nsPerFrame = 1000000000 / kScreenFps; 
@@ -468,6 +480,7 @@ int main( int argc, char* args[] )
     prevState = nullptr;
 
     renderSystem->Close();
+    audioSystem->Close();
     close();
 
     return exitCode;

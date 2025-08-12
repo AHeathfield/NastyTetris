@@ -36,6 +36,7 @@ set(SRCS
     src/Systems/HoldSystem.cpp
     src/Systems/RowSystem.cpp
     src/Systems/ScoreSystem.cpp
+    src/Systems/AudioSystem.cpp
     src/States/TitleState.cpp
     src/States/PlayState.cpp
     src/States/ScoreState.cpp

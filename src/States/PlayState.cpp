@@ -1,4 +1,5 @@
 #include "PlayState.h"
+#include <unordered_map>
 #include <vector>
 
 extern Coordinator gCoordinator;
@@ -96,6 +97,23 @@ void PlayState::Enter()
                 .position = Vector2(720.f, 100.f),
             });
 
+
+    mBGMusic = gCoordinator.CreateEntity();
+    std::unordered_map<std::string, Audio> entityAudios;
+    Audio bgMusic = {
+        .filePath = "src/Assets/Music/NastyTetrisBGMusic.wav",
+        .isMusic = true,
+        .isPlaying = true
+    };
+    entityAudios.insert({"Music", bgMusic});
+    gCoordinator.AddComponent(
+            mBGMusic,
+            AudioComponent{
+                .audios = entityAudios
+            });
+    auto audioSystem = gCoordinator.GetSystem<AudioSystem>();
+    audioSystem->LoadAudio(bgMusic);
+
     // Initializing Score
     auto scoreSystem = gCoordinator.GetSystem<ScoreSystem>();
     scoreSystem->Init();
@@ -120,6 +138,13 @@ void PlayState::Enter()
 
 void PlayState::Exit()
 {
+    // SDL_Log("EXITING PLAY");
+
+    // Stopping the music
+    auto& audioComponent = gCoordinator.GetComponent<AudioComponent>(mBGMusic);
+    audioComponent.Stop("Music");
+    gCoordinator.DestroyEntity(mBGMusic);
+
     // Destroy the Texture component
     auto& textureComponent = gCoordinator.GetComponent<TextureComponent>(mBackground);
     textureComponent.destroy();
