@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 project(NastyTetris)
 
+# Set C++ standard to 14 (or higher) for all targets
+set(CMAKE_CXX_STANDARD 14)          # Use C++14
+set(CMAKE_CXX_STANDARD_REQUIRED ON)  # Enforce the standard (no fallback)
+set(CMAKE_CXX_EXTENSIONS OFF)        # Disable compiler-specific extensions (e.g., GNU extensions)
+
 # set the output directory for built objects.
 # This makes sure that the dynamic library goes into the build directory automatically.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
@@ -25,6 +30,7 @@ add_subdirectory(vendored/SDL_mixer EXCLUDE_FROM_ALL)
 # This creates a var called sources which will contain all the cpp files we are compiling
 set(SRCS 
     game.cpp
+    src/Core/Utility.cpp
     src/Systems/RenderSystem.cpp
     src/Systems/MouseButtonSystem.cpp
     src/Systems/PhysicsSystem.cpp
@@ -51,16 +57,80 @@ set(SRCS
 )
 
 
-# Create your game executable target as usual
+# Creating the game Executables
+
+# For apple, the game.app is actually a folder, in that folder it's common to have:
+# A Frameworks folder which contains libs
+# Resources folder which contains assets
+# MacOS folder which contains actual exe
 if (APPLE)
-    # create exe for MacOS
+    # Create macOS .app bundle
     add_executable(game MACOSX_BUNDLE ${SRCS})
-    
-    # Setting paths
+
+    # Tell macOS where to look for dynamic libs in the bundle
     set_target_properties(game PROPERTIES
-        BUILD_RPATH "@executable_path/../Frameworks"
         INSTALL_RPATH "@executable_path/../Frameworks"
+        # MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/Info.plist"  # optional custom plist
     )
+
+    # Copy SDL dylibs into the bundle Frameworks folder
+    add_custom_command(TARGET game POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+            "$<TARGET_BUNDLE_CONTENT_DIR:game>/Frameworks"
+        COMMAND ${CMAKE_COMMAND} -E copy
+            "$<TARGET_FILE:SDL3::SDL3>"
+            "$<TARGET_BUNDLE_CONTENT_DIR:game>/Frameworks/"
+        COMMAND ${CMAKE_COMMAND} -E copy
+            "$<TARGET_FILE:SDL3_image::SDL3_image>"
+            "$<TARGET_BUNDLE_CONTENT_DIR:game>/Frameworks/"
+        COMMAND ${CMAKE_COMMAND} -E copy
+            "$<TARGET_FILE:SDL3_ttf::SDL3_ttf>"
+            "$<TARGET_BUNDLE_CONTENT_DIR:game>/Frameworks/"
+        COMMAND ${CMAKE_COMMAND} -E copy
+            "$<TARGET_FILE:SDL3_mixer::SDL3_mixer>"
+            "$<TARGET_BUNDLE_CONTENT_DIR:game>/Frameworks/"
+        COMMENT "Copying SDL libraries to Frameworks"
+    )
+
+    # Fix SDL install names to use @rpath inside the bundle
+    add_custom_command(TARGET game POST_BUILD
+        COMMAND install_name_tool -id "@rpath/$<TARGET_FILE_NAME:SDL3::SDL3>"
+            "$<TARGET_BUNDLE_CONTENT_DIR:game>/Frameworks/$<TARGET_FILE_NAME:SDL3::SDL3>"
+        COMMAND install_name_tool -id "@rpath/$<TARGET_FILE_NAME:SDL3_image::SDL3_image>"
+            "$<TARGET_BUNDLE_CONTENT_DIR:game>/Frameworks/$<TARGET_FILE_NAME:SDL3_image::SDL3_image>"
+        COMMAND install_name_tool -id "@rpath/$<TARGET_FILE_NAME:SDL3_ttf::SDL3_ttf>"
+            "$<TARGET_BUNDLE_CONTENT_DIR:game>/Frameworks/$<TARGET_FILE_NAME:SDL3_ttf::SDL3_ttf>"
+        COMMAND install_name_tool -id "@rpath/$<TARGET_FILE_NAME:SDL3_mixer::SDL3_mixer>"
+            "$<TARGET_BUNDLE_CONTENT_DIR:game>/Frameworks/$<TARGET_FILE_NAME:SDL3_mixer::SDL3_mixer>"
+        COMMENT "Setting SDL install names for @rpath"
+    )
+
+    # Fix the game binary's references to SDL libs
+    add_custom_command(TARGET game POST_BUILD
+        COMMAND install_name_tool -change "$<TARGET_FILE:SDL3::SDL3>"
+            "@rpath/$<TARGET_FILE_NAME:SDL3::SDL3>" "$<TARGET_BUNDLE_CONTENT_DIR:game>/MacOS/game"
+        COMMAND install_name_tool -change "$<TARGET_FILE:SDL3_image::SDL3_image>"
+            "@rpath/$<TARGET_FILE_NAME:SDL3_image::SDL3_image>" "$<TARGET_BUNDLE_CONTENT_DIR:game>/MacOS/game"
+        COMMAND install_name_tool -change "$<TARGET_FILE:SDL3_ttf::SDL3_ttf>"
+            "@rpath/$<TARGET_FILE_NAME:SDL3_ttf::SDL3_ttf>" "$<TARGET_BUNDLE_CONTENT_DIR:game>/MacOS/game"
+        COMMAND install_name_tool -change "$<TARGET_FILE:SDL3_mixer::SDL3_mixer>"
+            "@rpath/$<TARGET_FILE_NAME:SDL3_mixer::SDL3_mixer>" "$<TARGET_BUNDLE_CONTENT_DIR:game>/MacOS/game"
+        COMMENT "Fixing library paths in game binary"
+    )
+
+    # Copy assets into Contents/Resources (Finder-safe)
+    add_custom_command(TARGET game POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+            "$<TARGET_BUNDLE_CONTENT_DIR:game>/Resources/src/Assets"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/src/Assets"
+            "$<TARGET_BUNDLE_CONTENT_DIR:game>/Resources/src/Assets"
+        COMMAND ${CMAKE_COMMAND} -E copy
+            "${CMAKE_SOURCE_DIR}/src/Scores.txt"
+            "$<TARGET_BUNDLE_CONTENT_DIR:game>/Resources/src/"
+        COMMENT "Copying game assets to Resources"
+    )
+    
 else()
     # WIN32 is needed for windows, it is ignored for linux
     add_executable(game WIN32 ${SRCS})

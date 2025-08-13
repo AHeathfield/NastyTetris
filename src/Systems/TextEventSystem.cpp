@@ -1,4 +1,5 @@
 #include "TextEventSystem.h"
+#include "../Core/Utility.h"
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_keycode.h>
 #include <cstddef>
@@ -39,7 +40,7 @@ void TextEventSystem::Init()
     // SDL_Log(scoreSystem->GetScoreString().c_str());
 
     // Opening score file in read mode
-    std::ifstream file("src/Scores.txt");
+    std::ifstream file(utility::getProjectPath("src/Scores.txt"));
     
     if (!file.is_open())
     {
@@ -235,7 +236,7 @@ void TextEventSystem::Close()
 void TextEventSystem::Save()
 {
     // Opening file
-    std::ofstream file("src/Scores.txt");
+    std::ofstream file(utility::getProjectPath("src/Scores.txt"));
 
     for (int i = 0; i < mScores.size(); i++)
     {

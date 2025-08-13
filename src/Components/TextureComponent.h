@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL.h>
 #include "../Core/Vector2.h"
+#include "../Core/Utility.h"
 #include <SDL3/SDL_pixels.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -32,7 +33,7 @@ struct TextureComponent
 
     bool loadFont()
     {
-        font = TTF_OpenFont(path.c_str(), fontSize);
+        font = TTF_OpenFont(utility::getProjectPath(path).c_str(), fontSize);
         return font != nullptr;
     }
 

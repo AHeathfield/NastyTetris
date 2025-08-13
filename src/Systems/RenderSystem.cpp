@@ -1,4 +1,5 @@
 #include "RenderSystem.h"
+#include "../Core/Utility.h"
 #include <SDL3/SDL_keyboard.h>
 #include <SDL3/SDL_log.h>
 #include <SDL3/SDL_rect.h>
@@ -193,10 +194,13 @@ bool RenderSystem::loadTexture(TextureComponent* textureComponent)
 {
     // TODO: Clean up texture if already exists
     textureComponent->destroy();
-    // SDL_Log(textureComponent.path.c_str());
+
+    std::string path = utility::getProjectPath(textureComponent->path);
+
+    // SDL_Log(path.c_str());
 
     //Load surface
-    if( SDL_Surface* loadedSurface = IMG_Load( textureComponent->path.c_str() ); loadedSurface == nullptr )
+    if( SDL_Surface* loadedSurface = IMG_Load( path.c_str() ); loadedSurface == nullptr )
     {
         SDL_Log( "Unable to load image %s! SDL_image error: %s\n", textureComponent->path.c_str(), SDL_GetError() );
     }

@@ -1,4 +1,5 @@
 #include "AudioSystem.h"
+#include "../Core/Utility.h"
 #include <SDL3/SDL_log.h>
 #include <vector>
 
@@ -38,9 +39,11 @@ void AudioSystem::LoadAudio(Audio& audio)
     {
         // SDL_Log("TEST");
         bool success = true;
+        std::string path = utility::getProjectPath(audio.filePath);
+
         if (audio.isMusic)
         {
-            audio.music = Mix_LoadMUS(audio.filePath.c_str());
+            audio.music = Mix_LoadMUS(path.c_str());
             if (audio.music == nullptr)
             {
                 SDL_Log( "Unable to load music! SDL_mixer error: %s\n", SDL_GetError() );
@@ -49,7 +52,7 @@ void AudioSystem::LoadAudio(Audio& audio)
         }
         else
         {
-            audio.sfx = Mix_LoadWAV(audio.filePath.c_str());
+            audio.sfx = Mix_LoadWAV(path.c_str());
             if (audio.sfx == nullptr)
             {
                  SDL_Log( "Unable to load sfx! SDL_mixer error: %s\n", SDL_GetError() );
