@@ -55,10 +55,24 @@ set(SRCS
 if (APPLE)
     # create exe for MacOS
     add_executable(game MACOSX_BUNDLE ${SRCS})
+    
+    # Setting paths
+    set_target_properties(game PROPERTIES
+        BUILD_RPATH "@executable_path/../Frameworks"
+        INSTALL_RPATH "@executable_path/../Frameworks"
+    )
 else()
     # WIN32 is needed for windows, it is ignored for linux
     add_executable(game WIN32 ${SRCS})
+
+    # Setting paths
+    set_target_properties(game PROPERTIES
+        BUILD_RPATH "$ORIGIN/lib"
+        INSTALL_RPATH "$ORIGIN/lib"
+    )
 endif()
+
+
 
 # Link to the actual SDL3 library.
 target_link_libraries(game PRIVATE SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf SDL3_image::SDL3_image SDL3::SDL3)
