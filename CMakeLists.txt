@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(NastyTetris)
 
-# Set C++ standard to 14 (or higher) for all targets
-set(CMAKE_CXX_STANDARD 14)          # Use C++14
+# Set C++ standard to 17 (or higher) for all targets
+set(CMAKE_CXX_STANDARD 17)          # Use C++17
 set(CMAKE_CXX_STANDARD_REQUIRED ON)  # Enforce the standard (no fallback)
 set(CMAKE_CXX_EXTENSIONS OFF)        # Disable compiler-specific extensions (e.g., GNU extensions)
 

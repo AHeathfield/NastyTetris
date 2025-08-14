@@ -7,20 +7,29 @@
 #include <SDL3/SDL_video.h>
 #include <string>
 
-
 extern Coordinator gCoordinator;
+extern Vector2 gScreenSize;
 
 bool RenderSystem::Init()
 {
-    int screenWidth = 1920;
-    int screenHeight = 1080;
+    SDL_DisplayID displayID = SDL_GetPrimaryDisplay();
+    const SDL_DisplayMode* DM = SDL_GetCurrentDisplayMode(displayID);
+    if (DM == nullptr)
+    {
+        SDL_Log( "Failed to get Display Mode! SDL error: %s\n", SDL_GetError() );
+        return false;
+    }
+    gScreenSize.x = DM->w;
+    gScreenSize.y = DM->h;
+
+    // int screenWidth = 1920;
+    // int screenHeight = 1080;
 
     // TODO: Don't hardcode this...
-    // Only want to use camera as clip when dealing with bg
     mCamera.x = 0.f;
     mCamera.y = 0.f;
-    mCamera.w = screenWidth;
-    mCamera.h = screenHeight;
+    mCamera.w = gScreenSize.x;
+    mCamera.h = gScreenSize.y;
 
     // Framerate Stuff
     // mScreenFps = 60;
@@ -28,12 +37,30 @@ bool RenderSystem::Init()
  
 
     // Initializing Window and Renderer
-    if (SDL_CreateWindowAndRenderer( "NastyTetris", screenWidth, screenHeight, 0, &mWindow, &mRenderer ) == false )
+    if (SDL_CreateWindowAndRenderer( "NastyTetris", gScreenSize.x, gScreenSize.y, 0, &mWindow, &mRenderer ) == false )
     {
         SDL_Log( "Window could not be created! SDL error: %s\n", SDL_GetError() );
         return false;
     }
 
+    // Setting Fullscreen option (true if you want full screen)
+    // TODO: In a settings window/state, have an option to turn on fullscreen
+    if (SDL_SetWindowFullscreen(mWindow, true) == false)
+    {
+        SDL_Log( "Fullscreen cannot be set! SDL error: %s\n", SDL_GetError() );
+        return false;
+    }
+
+    // This scales the render output properly, so the game was made for 1920x1080 but lets say my laptop
+    // aspect ratio doesn't fit it well, it will scale it properly depending on the mode
+    // I currently have LETTERBOX which creates those blackbars, I found STRETCH and INTEGER_SCALE to also be good
+    // https://wiki.libsdl.org/SDL3/SDL_SetRenderLogicalPresentation
+    if (SDL_SetRenderLogicalPresentation(mRenderer, 1920, 1080, SDL_LOGICAL_PRESENTATION_LETTERBOX) == false)
+    {
+
+        SDL_Log( "Cannot scale renderer! SDL error: %s\n", SDL_GetError() );
+        return false;
+    }
     // Everything initialize good
     return true;
 }

@@ -47,21 +47,13 @@
 #include "src/Core/Timer.h"
 
 
+// Global vars
 Coordinator gCoordinator;
 State* gCurrentState;
+Vector2 gScreenSize;
 
 /* Constants */
 constexpr int kScreenFps{ 60 };
-
-//Channel constants
-enum class eEffectChannel
-{
-    Scratch = 0,
-    High = 1,
-    Medium = 2,
-    Low = 3,
-    Total = 4
-};
 
 
 /* Function Prototypes */
@@ -119,30 +111,6 @@ bool init()
             SDL_Log( "SDL_ttf could not initialize! SDL_ttf error: %s\n", SDL_GetError() );
             success = false;
         }
-
-        //Set audio spec
-        SDL_AudioSpec audioSpec;
-        SDL_zero( audioSpec );
-        audioSpec.format = SDL_AUDIO_F32;
-        audioSpec.channels = 2;
-        audioSpec.freq = 44100;
-
-        //Open audio device
-        gAudioDeviceId = SDL_OpenAudioDevice( SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &audioSpec );
-        if( gAudioDeviceId == 0 )
-        {
-            SDL_Log( "Unable to open audio! SDL error: %s\n", SDL_GetError() );
-            success = false;
-        }
-        else
-        {
-            //Initialize SDL_mixer
-            if( Mix_OpenAudio( gAudioDeviceId, nullptr ) == false )
-            {
-                SDL_Log( "SDL_mixer could not initialize! SDL_mixer error: %s\n", SDL_GetError() );
-                success = false;
-            }
-        }
     }
 
     return success;
@@ -151,35 +119,10 @@ bool init()
 
 void close()
 {
-    //Free music
-    Mix_FreeMusic( gMusic );
-    gMusic = nullptr;
-
-    //Free sound effects
-    Mix_FreeChunk( gScratch );
-    gScratch =  nullptr;
-    Mix_FreeChunk( gHigh );
-    gHigh =  nullptr;
-    Mix_FreeChunk( gMedium );
-    gMedium =  nullptr;
-    Mix_FreeChunk( gLow );
-    gLow =  nullptr;
-
-    //Close mixer audio
-    Mix_CloseAudio();
-
-    //Close audio device
-    SDL_CloseAudioDevice( gAudioDeviceId );
-    gAudioDeviceId = 0;
-
-    //Free font
-    // TTF_CloseFont( gFont );
-    // gFont = nullptr;
-
     //Quit SDL subsystems
-    Mix_Quit();
-    TTF_Quit();
-    SDL_Quit();
+    // Mix_Quit();
+    // TTF_Quit();
+    // SDL_Quit();
 }
 
 
