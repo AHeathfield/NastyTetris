@@ -2,17 +2,23 @@
 #include <SDL3/SDL_events.h>
 
 extern Coordinator gCoordinator;
+extern Vector2 gScreenSize;
 
 
 void MouseButtonSystem::HandleEvent(SDL_Event* e)
 {
+
     //If mouse event happened
     if( e->type == SDL_EVENT_MOUSE_MOTION || e->type == SDL_EVENT_MOUSE_BUTTON_DOWN || e->type == SDL_EVENT_MOUSE_BUTTON_UP )
     {
+        auto renderSystem = gCoordinator.GetSystem<RenderSystem>();
+
         //Get mouse position
         float x = -1.f, y = -1.f;
         SDL_GetMouseState( &x, &y );
-        Vector2 mousePos = Vector2(x, y);
+        Vector2 mousePos = renderSystem->GetLogicalMouseCoords(Vector2(x, y));
+        // SDL_Log(mousePos.PrintPosition().c_str());
+        // SDL_Log(gScreenSize.PrintPosition().c_str());
 
         //Check if mouse is in button
         for (const auto& entity : mEntities)

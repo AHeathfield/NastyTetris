@@ -55,7 +55,7 @@ bool RenderSystem::Init()
     // aspect ratio doesn't fit it well, it will scale it properly depending on the mode
     // I currently have LETTERBOX which creates those blackbars, I found STRETCH and INTEGER_SCALE to also be good
     // https://wiki.libsdl.org/SDL3/SDL_SetRenderLogicalPresentation
-    if (SDL_SetRenderLogicalPresentation(mRenderer, 1920, 1080, SDL_LOGICAL_PRESENTATION_LETTERBOX) == false)
+    if (SDL_SetRenderLogicalPresentation(mRenderer, kLogicalRenderX, kLogicalRenderY, SDL_LOGICAL_PRESENTATION_LETTERBOX) == false)
     {
 
         SDL_Log( "Cannot scale renderer! SDL error: %s\n", SDL_GetError() );
@@ -163,6 +163,41 @@ bool RenderSystem::LoadMedia(TextureComponent* textureComponent)
 
     return true;
 }
+
+
+// This is mainly for getting proper mouse coordinates with scaled renderers
+Vector2 RenderSystem::GetLogicalMouseCoords(const Vector2& mousePos)
+{
+    // Doesn't do anything lol, I think setting the logical calls this already
+    // if (SDL_ConvertEventToRenderCoordinates(mRenderer, event) == false)
+    // {
+    //     SDL_Log( "Cannot convert event coordinates to the logical render coordinates! SDL error: %s\n", SDL_GetError() );
+    // }
+    
+    // NOTE: Assumes we are using LETTERBOX
+    float scale = 1.f;
+    if (kLogicalRenderX > kLogicalRenderY)
+    {
+        scale = kLogicalRenderX / gScreenSize.x;
+        int offsetY = (gScreenSize.y - kLogicalRenderY) / 2;
+        return Vector2(mousePos.x * scale, (mousePos.y + offsetY) * scale);
+    }
+    else
+    {
+        scale = kLogicalRenderY / gScreenSize.y;
+        int offsetX = (gScreenSize.x - kLogicalRenderX) / 2;
+        return Vector2((mousePos.x + offsetX) * scale, mousePos.y * scale);
+    }
+}
+
+// This is if there is a letterbox (or whenever viewport is needed)
+// void RenderSystem::GetRenderViewport(SDL_Rect* rect)
+// {
+//     if (SDL_GetRenderViewport(mRenderer, rect) == false)
+//     {
+//         SDL_Log( "Cannot get render viewport! SDL error: %s\n", SDL_GetError() );
+//     }
+// }
 
 
 void RenderSystem::Render(TransformComponent transfromComponent, TextureComponent textureComponent, double degrees, SDL_FPoint* center, SDL_FlipMode flipMode)

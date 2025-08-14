@@ -7,6 +7,10 @@
 
 class RenderSystem : public System
 {
+// public:
+    static constexpr int kLogicalRenderX = 1920;
+    static constexpr int kLogicalRenderY = 1080;
+
 public:
     // initializes window
     bool Init();
@@ -14,6 +18,9 @@ public:
     bool LoadAllMedia();
 
     bool LoadMedia(TextureComponent* textureComponent);
+
+    Vector2 GetLogicalMouseCoords(const Vector2& mousePos);
+    // void GetRenderViewport(SDL_Rect* rect);
 
     // Things that happen every frame
     void Update();
