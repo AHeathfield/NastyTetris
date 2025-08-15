@@ -11,6 +11,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)        # Disable compiler-specific extensions (e.g
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
+# It makes sure the SDL libs and game works with MacOS versions at least 11.0
+if (APPLE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "Minimum macOS version" FORCE)
+endif()
+
 # Use vendored libs
 set(SDLTTF_VENDORED ON)
 
@@ -64,13 +69,18 @@ set(SRCS
 # Resources folder which contains assets
 # MacOS folder which contains actual exe
 if (APPLE)
+    # Set minimum macOS version when compiling
+    # set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "Minimum macOS version" FORCE)
+
     # Create macOS .app bundle
     add_executable(game MACOSX_BUNDLE ${SRCS})
 
     # Tell macOS where to look for dynamic libs in the bundle
     set_target_properties(game PROPERTIES
         INSTALL_RPATH "@executable_path/../Frameworks"
-        # MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/Info.plist"  # optional custom plist
+        BUILD_WITH_INSTALL_RPATH TRUE
+        MACOSX_RPATH ON
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/Info.plist"  # optional custom plist
     )
 
     # Copy SDL dylibs into the bundle Frameworks folder
@@ -90,6 +100,15 @@ if (APPLE)
             "$<TARGET_FILE:SDL3_mixer::SDL3_mixer>"
             "$<TARGET_BUNDLE_CONTENT_DIR:game>/Frameworks/"
         COMMENT "Copying SDL libraries to Frameworks"
+    )
+
+    # Create version symlinks
+    add_custom_command(TARGET game POST_BUILD
+        COMMAND cd "$<TARGET_BUNDLE_CONTENT_DIR:game>/Frameworks" &&
+                ln -sf libSDL3_mixer.0.0.0.dylib libSDL3_mixer.0.dylib &&
+                ln -sf libSDL3_mixer.0.dylib libSDL3_mixer.dylib &&
+                ln -sf libSDL3_ttf.0.3.0.dylib libSDL3_ttf.0.dylib &&
+                ln -sf libSDL3_image.0.3.0.dylib libSDL3_image.0.dylib
     )
 
     # Fix SDL install names to use @rpath inside the bundle
