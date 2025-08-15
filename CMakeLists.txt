@@ -162,6 +162,54 @@ else()
         BUILD_RPATH "$ORIGIN/lib"
         INSTALL_RPATH "$ORIGIN/lib"
     )
+
+    # Linux-only: copy .so files into libs folder
+    if (UNIX AND NOT APPLE)
+        add_custom_command(TARGET game POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory
+                "$<TARGET_FILE_DIR:game>/libs"
+            COMMAND ${CMAKE_COMMAND} -E copy
+                "$<TARGET_FILE:SDL3::SDL3>"
+                "$<TARGET_FILE_DIR:game>/libs/"
+            COMMAND ${CMAKE_COMMAND} -E copy
+                "$<TARGET_FILE:SDL3_image::SDL3_image>"
+                "$<TARGET_FILE_DIR:game>/libs/"
+            COMMAND ${CMAKE_COMMAND} -E copy
+                "$<TARGET_FILE:SDL3_ttf::SDL3_ttf>"
+                "$<TARGET_FILE_DIR:game>/libs/"
+            COMMAND ${CMAKE_COMMAND} -E copy
+                "$<TARGET_FILE:SDL3_mixer::SDL3_mixer>"
+                "$<TARGET_FILE_DIR:game>/libs/"
+            COMMENT "Copying SDL shared libraries to libs folder for Linux"
+        )
+
+            # Create version symlinks
+        add_custom_command(TARGET game POST_BUILD
+            COMMAND cd "$<TARGET_FILE_DIR:game>/libs" &&
+                    ln -sf libSDL3_mixer.so.0.0.0 libSDL3_mixer.so.0 &&
+                    ln -sf libSDL3_mixer.so.0 libSDL3_mixer.so &&
+                    ln -sf libSDL3_ttf.so.0.3.0 libSDL3_ttf.so.0 &&
+                    ln -sf libSDL3_ttf.so.0 libSDL3_ttf.so &&
+                    ln -sf libSDL3_image.so.0.3.0 libSDL3_image.so.0 &&
+                    ln -sf libSDL3_image.so.0 libSDL3_image.so &&
+                    ln -sf libSDL3.so.0 libSDL3.so
+        )
+    endif()
+
+
+    # Copy assets next to the built executable
+    add_custom_command(TARGET game POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+            "$<TARGET_FILE_DIR:game>/src/Assets"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/src/Assets"
+            "$<TARGET_FILE_DIR:game>/src/Assets"
+        COMMAND ${CMAKE_COMMAND} -E copy
+            "${CMAKE_SOURCE_DIR}/src/Scores.txt"
+            "$<TARGET_FILE_DIR:game>/src/"
+        COMMENT "Copying game assets for Windows/Linux"
+    )
+
 endif()
 
 
