@@ -68,6 +68,12 @@ bool RenderSystem::Init()
 
 void RenderSystem::Update()
 {
+    // Updating window size if it changed
+    int windowW, windowH;
+    SDL_GetWindowSize(mWindow, &windowW, &windowH);
+    gScreenSize.x = windowW;
+    gScreenSize.y = windowH;
+
     // TODO: Bound camera
 
     // Fills the background
@@ -168,26 +174,19 @@ bool RenderSystem::LoadMedia(TextureComponent* textureComponent)
 // This is mainly for getting proper mouse coordinates with scaled renderers
 Vector2 RenderSystem::GetLogicalMouseCoords(const Vector2& mousePos)
 {
-    // Doesn't do anything lol, I think setting the logical calls this already
-    // if (SDL_ConvertEventToRenderCoordinates(mRenderer, event) == false)
-    // {
-    //     SDL_Log( "Cannot convert event coordinates to the logical render coordinates! SDL error: %s\n", SDL_GetError() );
-    // }
-    
-    // NOTE: Assumes we are using LETTERBOX
-    float scale = 1.f;
-    if (kLogicalRenderX > kLogicalRenderY)
-    {
-        scale = kLogicalRenderX / gScreenSize.x;
-        int offsetY = (gScreenSize.y - kLogicalRenderY) / 2;
-        return Vector2(mousePos.x * scale, (mousePos.y + offsetY) * scale);
-    }
-    else
-    {
-        scale = kLogicalRenderY / gScreenSize.y;
-        int offsetX = (gScreenSize.x - kLogicalRenderX) / 2;
-        return Vector2((mousePos.x + offsetX) * scale, mousePos.y * scale);
-    }
+    // NOTE: Assumes we are using LETTERBOX OLD
+    float scale = std::min(
+        gScreenSize.x / kLogicalRenderX,
+        gScreenSize.y / kLogicalRenderY
+    );
+
+    float offsetX = (gScreenSize.x - (kLogicalRenderX * scale)) / 2;
+    float offsetY = (gScreenSize.y - (kLogicalRenderY * scale)) / 2;
+
+    return Vector2(
+        (mousePos.x - offsetX) / scale,
+        (mousePos.y - offsetY) / scale
+    );
 }
 
 // This is if there is a letterbox (or whenever viewport is needed)
