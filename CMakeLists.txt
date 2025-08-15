@@ -108,7 +108,10 @@ if (APPLE)
                 ln -sf libSDL3_mixer.0.0.0.dylib libSDL3_mixer.0.dylib &&
                 ln -sf libSDL3_mixer.0.dylib libSDL3_mixer.dylib &&
                 ln -sf libSDL3_ttf.0.3.0.dylib libSDL3_ttf.0.dylib &&
-                ln -sf libSDL3_image.0.3.0.dylib libSDL3_image.0.dylib
+                ln -sf libSDL3_ttf.0.dylib libSDL3_ttf.dylib &&
+                ln -sf libSDL3_image.0.3.0.dylib libSDL3_image.0.dylib &&
+                ln -sf libSDL3_image.0.dylib libSDL3_image.dylib &&
+                ln -sf libSDL3.0.dylib libSDL3.dylib
     )
 
     # Fix SDL install names to use @rpath inside the bundle
