@@ -1,3 +1,9 @@
+
+
+https://github.com/user-attachments/assets/3a1d5d18-25c6-448e-a70f-811eda509c1f
+
+
+
 # NastyTetris
 Making tetris without worrying too much about the quality of the code and structure of it more for a learning experience.
 
